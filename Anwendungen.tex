@@ -5,37 +5,78 @@
 \subsubsection{Algorthimen für Haar-Analyse und Synthese}
 %
 \paragraph{1D Signale}~\\
-Nun geht es um die konkrete Realisierung einer Filterbank für Analyse und Synthese von Signalen. Da es sich bei der Haar-Basis um eine Orthonormalbasis handelt läge es auf Anhieb nahe die Koeffizienten einfach über ein Skalarprodukt mit der entsprechenden Basisfunktion zu berechnen. Da alle betracheten Funktionen stückweise konstant sind, wäre ein solches Vorgehen prinzipiell machbar, es stellt sich aber heraus, dass man auf diese Weise einige Zwischneergebnisse mehrfach berechnet, was die Laufzeit erhöht. Einen effizienteren Algorithmus erhält man, indem man sich stärker an den konzeptionellen Ablauf der Filterbank hält und das Signal schrittweise analysiert.
+Nun geht es um die konkrete Realisierung einer Filterbank für Analyse und Synthese von Signalen. Da es sich bei der Haar-Basis um eine Orthonormalbasis handelt, läge es auf Anhieb nahe, die Koeffizienten einfach über ein Skalarprodukt mit der entsprechenden Basisfunktion zu berechnen. Da alle betracheten Funktionen stückweise konstant sind, wäre ein solches Vorgehen prinzipiell machbar, es stellt sich aber heraus, dass man auf diese Weise einige Zwischneergebnisse mehrfach berechnet, was eine relative hohe Laufzeit zur Folge hat. Einen effizienteren Algorithmus erhält man, indem man sich stärker an den konzeptionellen Ablauf der Filterbank hält und das Signal schrittweise analysiert.
 %
-Ein Signal liege in Form einer Liste von $2^j$ Werten vor, welche die Koeffizienten der Approximation des Signals durch die Skalierungsfunktionen im Raum $V^j$ darstellen. Ein Schritt des Filterbank-Algorithmus erhält diese Liste als Input und gibt die Approximation des Signals durch $2^{j-1}$ Koeffizienten im Raum $V^{j-1}$, sowie $2^{j-1}$ zugehörige Detailkoeffizienten des Waveletraums $W^{j-1}$ aus. Die genaue Berechnungsvorschrift hierfür erhält man aus den Beziehungen den Skalierungsfunktionen und Waveletfunktionen auf Level $(j-1)$ und den Skalierungsfunktionen auf Level $j$. Offenbar gilt:
+Ein Signal liege in Form einer Liste von $2^j$ Werten vor, welche die Koeffizienten der Approximation des Signals durch die Skalierungsfunktionen im Raum $V^j$ darstellen. Ein Schritt des Filterbank-Algorithmus erhält diese Liste als Input und gibt die Approximation des Signals durch $2^{j-1}$ Koeffizienten im Raum $V^{j-1}$, sowie $2^{j-1}$ zugehörige Detailkoeffizienten des Waveletraums $W^{j-1}$ aus. Die genaue Berechnungsvorschrift hierfür erhält man aus den Beziehungen der Skalierungsfunktionen und Waveletfunktionen auf Level $(j-1)$ und den Skalierungsfunktionen auf Level $j$. Offenbar gilt:
 %
 \[
-\phi_{i}^{j-1} = \frac{1}{\sqrt{2}} \phi_{2i}^{j} + \frac{1}{\sqrt{2}} \phi_{2i+1}^{j} 
+\phi_{i}^{j-1} = \frac{1}{\sqrt{2}}( \phi_{2i}^{j} + \phi_{2i+1}^{j} )
 \qquad , \qquad
-\psi_{i}^{j-1} = \frac{1}{\sqrt{2}} \phi_{2i}^{j} - \frac{1}{\sqrt{2}} \phi_{2i+1}^{j}
+\psi_{i}^{j-1} = \frac{1}{\sqrt{2}}( \phi_{2i}^{j} - \phi_{2i+1}^{j} )
+\]
+bzw.
+\[
+\begin{pmatrix}
+\phi_{i}^{j-1} \\
+\psi_{i}^{j-1}
+\end{pmatrix}
+=
+\frac{1}{\sqrt{2}}
+\begin{pmatrix}
+1 & 1 \\
+1 & -1
+\end{pmatrix}
+\begin{pmatrix}
+\phi_{2i}^{j} \\
+\phi_{2i+1}^{j}
+\end{pmatrix}
+=:
+\mathbf{M}
+\begin{pmatrix}
+\phi_{2i}^{j} \\
+\phi_{2i+1}^{j}
+\end{pmatrix}
 .
 \]
 %
-(\textbf{BILD!!!}) Diese Beziehungen Charakterisieren die Synthesematrizen $\mathbf{P}$ und $\mathbf{Q}$ aus der theoretischen Behandlung. Für die umgekehrte Beziehung folgt entsprechend:
+(\textbf{BILD!!!}) Diese Beziehungen Charakterisieren die Synthesematrizen $\mathbf{P}$ und $\mathbf{Q}$ aus der theoretischen Behandlung. Wie man leicht sieht ist die Matrix $\mathbf{M}$ selbstinvers. Für die umgekehrte Beziehung erhält man folglich ebenfalls:
 %
 \[
-\phi_{2i}^{j} = \frac{1}{\sqrt{2}} (\phi_{i}^{j-1} + \psi_{i}^{j-1})
-\qquad , \qquad
-\phi_{2i+1}^{j} = \frac{1}{\sqrt{2}} (\phi_{i}^{j-1} - \psi_{i}^{j-1})
+\begin{pmatrix}
+\phi_{2i}^{j} \\
+\phi_{2i+1}^{j}
+\end{pmatrix}
+=
+\mathbf{M}
+\begin{pmatrix}
+\phi_{i}^{j-1} \\
+\psi_{i}^{j-1}
+\end{pmatrix}
 .
 \]
 %
-Die Berechnungsvorschriften für einen Analyse- bzw. Synthese-Schritt lauten daher wie folgt:
+Die Koeffiziententransformation ist daher in beiden Fällen die selbe, man erhält:
 %
 \[
-a \phi_{2i}^{j} + b \phi_{2i+1}^{j} = \frac{a + b}{\sqrt{2}} \phi_{i}^{j-1} + \frac{a - b}{\sqrt{2}} \psi_{i}^{j-1}
-\qquad , \qquad
-v \phi_{i}^{j-1} + w \psi_{i}^{j-1} = \frac{v + w}{\sqrt{2}} \phi_{2i}^{j} + \frac{v - w}{\sqrt{2}} \phi_{2i+1}^{j}
+\begin{pmatrix}
+a & b
+\end{pmatrix}
+\mapsto
+\begin{pmatrix}
+a & b
+\end{pmatrix}
+\mathbf{M}
+=
+\begin{pmatrix}
+\frac{a+b}{\sqrt{2}} & \frac{a-b}{\sqrt{2}}
+\end{pmatrix}
 .
 \]
 %
-Konkret erhält man hieraus die folgenden Funktionen für die Durchführung eines Analyse- bzw. Synthese-Schritts: \textbf{Hey, Blindfisch! Die Transformation ist selbstinvers!!! (zumindest jeder Einzelschritt)}
-%
+Konkret erhält man hieraus die folgenden Funktionen für die Durchführung eines Analyse- bzw. Synthese-Schritts:
+
+\begin{adjustbox}{max width=\textwidth ,center}
+\begin{tabular}{p{.575\textwidth}|p{.575\textwidth}}
 \begin{verbatim}
 def analysisStep(C):
     C' = empty_like(C)
@@ -44,7 +85,9 @@ def analysisStep(C):
         C'[i] = (C[2*i] + C[2*i+1])/sqrt(2)
         C'[h+i] = (C[2*i] - C[2*i+1])/sqrt(2)
     return C'
-
+\end{verbatim}
+&
+\begin{verbatim}
 def synthesisStep(C'):
     C = empty_like(C')
     h = C'.size // 2
@@ -53,11 +96,17 @@ def synthesisStep(C'):
         C[2*i+1] = (C'[i] - C'[h+i])/sqrt(2)
     return C
 \end{verbatim}
-%
-Die Listen sind dabei so zu interpretieren, dass \texttt{C} die Koeffizienten bzgl. $V^i$ enthält und \texttt{C'} die Koeffizienten bzgl. $V^{j-1}$ in der vorderen Hälfte, sowie die zugehörigen Detailkoeffizienten zu $W^{j-1}$ in der hinteren Hälfte.\\
-Eine vollständige Wavelet-Transformation erhält man dann durch das Hintereinanderausführen mehrerer Analyseschritte, die Rücktransformation entsprechend durch widerholte Syntheseschritte:
+\\
+\end{tabular}
+\end{adjustbox}
+
+\noindent Die Listen sind dabei so zu interpretieren, dass \texttt{C} die Koeffizienten bzgl. der $\phi^{j}$ enthält und \texttt{C'} die Koeffizienten bzgl. der $\phi^{j-1}$ in der vorderen Hälfte, sowie die zugehörigen Detailkoeffizienten zu den $\psi^{j-1}$ in der hinteren Hälfte.\\
+Eine vollständige Wavelet-Transformation erhält man dann durch rekursive Analyse der $\phi^{j}$-Koeffizienten, die Rücktransformation entsprechend durch widerholte Syntheseschritte:
 \\
 \textbf{Erwähne ich die Normalisierung? -- notwendig, wenn Sample-Werte gegeben, da die Skalierungsfunktionen nicht den Wert 1 haben.}
+
+\begin{adjustbox}{max width=\textwidth ,center}
+\begin{tabular}{p{.575\textwidth}|p{.575\textwidth}}
 \begin{verbatim}
 def analysis(C):
     C' = copy(C)
@@ -66,7 +115,9 @@ def analysis(C):
         C' = analysisStep(C'[0:h])
         h = h // 2
     return C'
-
+\end{verbatim}
+&
+\begin{verbatim}
 def synthesis(C'):
     C = copy(C')
     h = 1
@@ -75,8 +126,11 @@ def synthesis(C'):
         C = synthesisStep(C[0:h])
     return C
 \end{verbatim}
-%
-Ein Analyse- bzw. Syntheseschritt eines Signals der Länge $m$ benötigt $m$ Operationen innerhalb der Schleife. Für eine vollständige Analyse bzw. Synthese eines Signals der Länge $n=2^k$ werden $k$ Teilschritte zu den Teillängen $2^k, 2^{k-1}, ... 2^2, 2$ durchgeführt. Die Gesamtkomplexität beläuft sich damit auf $\sum_{i=1}^k 2^i = 2^{k+1}-2 = (2n-2)$ Operationen.
+\\
+\end{tabular}
+\end{adjustbox}
+
+\noindent Ein Analyse- bzw. Syntheseschritt eines Signals der Länge $m$ benötigt $m$ Operationen innerhalb der Schleife. Für eine vollständige Analyse bzw. Synthese eines Signals der Länge $n=2^k$ werden $k$ Teilschritte zu den Teillängen $2^k, 2^{k-1}, ... 2^2, 2$ durchgeführt. Die Gesamtkomplexität beläuft sich damit auf $\sum_{i=1}^k 2^i = 2^{k+1}-2 = (2n-2)$ Operationen.
 %
 \paragraph{2D Signale bzw. Bilder}~\\
 Für 2D Signale muss zwischen der Standard- und der Nicht-Standard-Basis unterschieden werden. Für beide sind Analyse und Synthese allerdings relativ einfach zu Implementieren und bauen auf den Algorithmen für den 1D Fall auf.
@@ -118,7 +172,9 @@ Die Analyse bzgl. der Standardbasis, welche aus den Tensorprodukten der eindimen
 \]
 %
 Die Synthese funktioniert analog in umgekehrter Richtung. Man erhält:
-%
+
+\begin{adjustbox}{max width=\textwidth ,center}
+\begin{tabular}{p{.575\textwidth}|p{.575\textwidth}}
 \begin{verbatim}
 def standardAnalysis(C):
     C' = copy(C)
@@ -127,7 +183,9 @@ def standardAnalysis(C):
     for j in range(C.shape[1]):
         C'[:,j] = analysis(C'[:,j])
     return C'
-
+\end{verbatim}
+&
+\begin{verbatim}
 def standardSynthesis(C'):
     C = copy(C')
     for j in range(C'.shape[1]):
@@ -136,8 +194,11 @@ def standardSynthesis(C'):
         C[i,:] = synthesis(C[i,:])
     return C
 \end{verbatim}
-%
-Für ein Bild mit $n \times n$ Pixeln werden in Analyse und Synthese je $n-$mal die eindimensionnale Analyse und Synthese aufgerufen. Die Komplexität der Operationen liegt daher je bei $n(2n-2) + n(2n-2) = 4n^2-4n$.
+\\
+\end{tabular}
+\end{adjustbox}
+
+\noindent Für ein Bild mit $n \times n$ Pixeln werden in Analyse und Synthese je $n-$mal die eindimensionnale Analyse und Synthese aufgerufen. Die Komplexität der Operationen liegt daher je bei $n(2n-2) + n(2n-2) = 4n^2-4n$.
 \\
 Für die Nicht-Standard-Basis ist die Situation ein wenig komplizierter. Es stellt sich aber heraus, dass auch hier ein Teil der Funktionen aus dem eindimensionalen Fall wiederverwendet werden können.\\
 Wie im eindimensionalen Fall steht zu Beginn die Beziehung zwischen den Skalierungsfunktionen auf Level $j$ und den Skalierungsfunktionen und Wavelets auf Level $(j-1)$. Hier gilt:
@@ -345,7 +406,9 @@ c\boldsymbol{+}d & c\boldsymbol{-}d
 \]
 %
 Das Resultat ist, dass ein Analyse-Schritt bezüglich der Nicht-Standard-Basis gerade ein Analyse-Schritt entlang einer Achse gefolgt von einem Analyse-Schritt entlang der anderen Achse ist. Selbiges gilt für die Synthese. Analog zum eindimensionalen Fall ergibt sich die Gesamtoperation für Analyse bzw. Synthese aus wiederholtem anwenden der Einzelschritte auf die Skalierungsfunktionskoeffizienten. Man erhält:
-%
+
+\begin{adjustbox}{max width=\textwidth ,center}
+\begin{tabular}{p{.575\textwidth}|p{.575\textwidth}}
 \begin{verbatim}
 def nonstandardAnalysis(C):
     C' = copy(C)
@@ -357,7 +420,9 @@ def nonstandardAnalysis(C):
             C'[0:h,j] = analysisStep(C'[0:h,j])
         h = h // 2
     return C'
-
+\end{verbatim}
+&
+\begin{verbatim}
 def nonstandardSynthesis(C'):
     C = copy(C')
     h = 1
@@ -369,8 +434,11 @@ def nonstandardSynthesis(C'):
             C[i,0:h] = synthesisStep(C[i,0:h])
     return C
 \end{verbatim}
-%
-Die Laufzeitkomplexität der Operationen ergibt damit sich zu 
+\\
+\end{tabular}
+\end{adjustbox}
+
+\noindent Die Laufzeitkomplexität der Operationen ergibt damit sich zu 
 %
 \[
 \sum_{i=1}^k 2^{2i} + 2^{2i} 
