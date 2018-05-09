@@ -3,3 +3,7 @@
 *.synctex.gz
 draft.pdf
 DSC_0316.JPG
+*.toc
+pres.out
+*.nav
+pres.snm
