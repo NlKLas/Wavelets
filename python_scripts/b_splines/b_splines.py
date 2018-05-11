@@ -1,6 +1,7 @@
 import numpy as np
 from scipy.sparse import lil_matrix
 import scipy as sci
+import scipy.sparse.linalg
 import matplotlib.pyplot as plt
 
 '''
@@ -200,12 +201,12 @@ This is equivalent to the equation
 where Perm is an arbitrary permutation matrix represented by the column permutation \pi.
 Introduce X := Perm^{-1}*(C^j/D^j) and W := (P|Q)*Perm. The equation thus becomes:
 W*X = C^{j+1}.
-Solving after solving this equation for X, (C^j/D^j) can be recovered as
+After solving this equation for X, (C^j/D^j) can be recovered as
 (C^j/D^j) = Perm*X.
 Note that if Perm is represented by the column permutation \pi, its representation as a row permutation is \tau = \pi^{-1}.
 If \pi and \pi^{-1} are known, the multiplication with Perm can be realized by proper indexing.
 Following this stategy, it is possible to efficiently solve the problem at hand since Perm can be chosen such that W is a banded matrix while (P|Q) isn't.
-LU decomposition can be applied to the later problem in linear time (or so I have read; I am not super confident about this howeven).
+LU decomposition can be applied to the later problem in linear time (or so I have read; I am not super confident about this however).
 
 The LU decomposition can be precomputed as soon as (P|Q) is available (i.e. on startup).
 A single stage of the filter bank can later be efficiently solved with the precomputed decomposition and the permutation \pi^{-1}.
@@ -229,6 +230,8 @@ The reverse transform is also easyly implemented.
 
 Args:
 D: a numpy array of shape (n+1,d) containing the data points to be interpolated as row vectors 
+Returns:
+P: a numpy array of shape (n+3,d) containing the control points of the resuling b-spline curve.
 '''
 def interpolateCubic(D):
     #print(D)
@@ -249,10 +252,10 @@ def interpolateCubic(D):
     entries[2,-2:] = [-1,0]
     
     offsets = [1,0,-1]
-    M = sci.sparse.spdiags(entries, offsets, n+1, n+1)
+    M = sci.sparse.spdiags(entries, offsets, n+1, n+1, format='csc')
     #print(M.toarray())
     
-    M_inv = sci.sparse.linalg.splu(M, perm_spec='NATURAL')
+    M_inv = sci.sparse.linalg.splu(M, permc_spec='NATURAL')
     
     P = np.empty((n+3,d))
     P[0,...] = D[0,...]
@@ -260,10 +263,41 @@ def interpolateCubic(D):
     P[2:-2,...] = D[1:-1,...]
     P[-2,...] = 2*D[-1,...]
     P[-1,...] = D[-1,...]
+    #print(P)
     
     P[1:-1,...] = M_inv.solve(P[1:-1,...])
+    #print(P)
+    
+    #print(M.dot(P[1:-1,...]))
     
     return P
+
+
+'''
+For a knot vector with n+1 entries there are n+3 cubic b-spline basis functions. This means that n+3
+control points are required to specify cubic b-spline curves for n+1 knots (NOT counting paddings).
+B-spline interpolation of n+1 points yields n+3 control points.
+Thus the amount of points to be interpolated is equal to the resulting number of knots.
+
+For multiresolution analysis n=2^k is required. A given amount of points must therefore be upsampled 
+such that the number of resulting points is equal to 2^k+1 for some k.
+
+The idea is to linearly interpolate the given points and then resample 2^k+1 points from the resulting
+curve.
+
+Args:
+D: a numpy array of shape (n+1,d) containing the data points to be upsampled
+'''
+def upsample(D):
+    n = D.shape[0]-1
+    m = np.around(np.power(2, np.ceil(np.log2(n)))).astype(int)
+    
+    t = unifSubdiv(n,1)
+    
+    x = np.arange(0,m+1)/m
+    
+    return deBoor(x,t,D,1)
+
 
 
 '''
@@ -285,8 +319,158 @@ def unifSubdiv(n,d):
     return t
 
 
+'''
+Plot the uniform endpoint interpolating b-spline curve given by control_points of degree degree into ax using N sample points
+'''
+def plot_uniform_b_spline_curve(ax, control_points, degree=3, N=1000, **kwargs):
+    n = control_points.shape[0]-degree
+    
+    x = np.linspace(0,1,N)
+    t = unifSubdiv(n, degree)
+    
+    data = deBoor(x,t,control_points,degree)
+    
+    ax.plot(data[:,0], data[:,1], **kwargs)
+
+
+'''
+Completely decompose a cubic endpoint interpolating uniform b-spline curve given by
+2^k+3 control points into its coarser representations C^j for j=k, k-1, ..., 1, 0
+
+Args:
+C: a numpy array of shape (n+3,d) containing control points, where n=2^k for some k
+F: List of precomputed filters such that F[j-1](C^j) = (C^j-1 | D^j-1)
+
+Returns:
+A list L containing the approximations such that L[j] = C^j.
+--> L = [C^0, C^1, ..., C^k-1, C^k] (note: C^k = C)
+'''
+def completeDecomposition(C, F=None):
+    n = C.shape[0]-3
+    k = np.around(np.log2(n)).astype(int)
+    
+    L = [None]*(k+1)
+    L[k] = C
+    
+    if not F:
+        while k>0:
+            f = createFilterCubic(k)
+            L[k-1] = (f(L[k]))[:(2**(k-1)+3),...]
+            
+            k = k-1
+    
+    else:
+        while k>0:
+            f = F[k-1]
+            L[k-1] = (f(L[k]))[:(2**(k-1)+3),...]
+            
+            k = k-1
+    
+    return L
+
+
+'''
+Create and return the analysis filters as well as the P-projection matrices required for
+multiresolution editing of an endpoint interpolating uniform cubic b-spline curve represented
+by n=2^k+3 (for some k) control points
+
+Args:
+k: k such that n=2^k+3
+
+Returns:
+(P, F), where P is a list of P-projections such that P[j]=P^(j+1) for j=0, 1, ..., k-1 and
+F is a list of analysis filters such that F[j]=f^(j+1) for j=0, 1, ..., k-1
+
+note: C^j = P^j*C^(j-1) + Q^j*D^(j-1), f^j(C^j) = (C^(j-1) | D^(j-1)) 
+'''
+def createFiltersAndProjectionsForMLE(k):
+    P = [None]*k
+    F = [None]*k
+    for j in range(k):
+        P[j] = projectionPcubic(j+1)
+        F[j] = createFilterCubic(j+1)
+    
+    return (P, F)
+
+'''
+Propagate a change deltaC_j on some level 0 <= j <= k to all other levels.
+
+Args:
+deltaC_j: changes on level j
+L: A list L containing the approximations such that L[j] = C^j.
+    --> L = [C^0, C^1, ..., C^k-1, C^k] (note: C^k = C)
+P: precomputed P-projections
+F: precomputed filters
+
+Returns:
+an updated version of L
+'''
+def updateCompleteDecomposition(deltaC_j, L, P, F):
+    j = np.around(np.log2(deltaC_j.shape[0]-3)).astype(int)
+    k = len(L)-1
+    
+    L[j] = L[j] + deltaC_j
+    
+    temp = deltaC_j.copy()
+    i = j
+    while i > 0:
+        f = F[i-1]
+        temp = (f(temp))[:(2**(i-1)+3),...]
+        L[i-1] = L[i-1] + temp
+        i = i-1
+    
+    temp = deltaC_j.copy()
+    i = j+1
+    while i <= k:
+        temp = P[i-1].dot(temp)
+        L[i] = L[i] + temp
+        i = i+1
+    
+    return L
+
+
+
 if __name__ == '__main__':
     np.set_printoptions(linewidth=200)#,precision=1)
+    
+    D = np.array([[0.0,0],[1,0],[1,1],[0,1],[0.5,0.5],[1,1]])
+    C = upsample(D)
+    print(D)
+    print(C)
+    #plt.scatter(D[:,0], D[:,1], color='blue')
+    #plt.plot(D[:,0], D[:,1], color='blue', ls='--')
+    #plt.scatter(C[:,0], C[:,1], color='red')
+    
+    A = interpolateCubic(C)
+    
+    #plt.scatter(A[:,0], A[:,1], color='green')
+    #plt.plot(A[:,0], A[:,1], color='green', ls='--')
+    plot_uniform_b_spline_curve(plt.gca(), A, degree=3, N=1000, color='green')
+    
+    ''''
+    n = A.shape[0]-3
+    k = np.around(np.log2(n)).astype(int)
+    
+    f = createFilterCubic(k)
+    
+    B = f(A)
+    B_C = B[:(2**(k-1)+3),...]
+    
+    plt.scatter(B_C[:,0], B_C[:,1], color='red')
+    plt.plot(B_C[:,0], B_C[:,1], color='red', ls='--')
+    plot_uniform_b_spline_curve(plt.gca(), B_C, degree=3, N=1000, color='red')
+    '''
+    
+    L = completeDecomposition(A)
+    
+    for G in L:
+        #plt.scatter(G[:,0], G[:,1])
+        #plt.plot(G[:,0], G[:,1], ls='--')
+        plot_uniform_b_spline_curve(plt.gca(), G, degree=3, N=1000)
+    
+    plt.show()
+    
+    
     '''
     print((projectionPQcubic(4).toarray()!=0)*1)
     perm, inv = permCubic(4)
@@ -330,6 +514,7 @@ if __name__ == '__main__':
     
     '''
     
+    '''
     # for some reason the program fails for p=3 and n=4, which should work...
     # --> fixed it ! (make sure to pass c as a floating point array......)
     p = 3
@@ -351,7 +536,7 @@ if __name__ == '__main__':
 
     plt.grid()
     plt.show()
-    
+    '''
 
 
 
