@@ -1,3 +1,6 @@
 \section{Einleitung}
 %
-text goes here
+Auf dem Computer werden jegliche Informationen in Form von Bytes, also Zahlenfolgen bestehend aus 0 und 1, gespeichert. Der Speicherplatz ist dabei beschränkt und es ist oft erstrebenswert die Menge an Bytes, welche eine Information repräsentieren, zu reduzieren. Man unterscheidet dabei zwischen zwei Arten dieser sogenannten Kompression:\\
+Bei der verlustfreien Kompression wird versucht die Entropie der Zahlenfolge, welche die Information repräsentiert, zu maximieren, um so den selben Informationsgehalt auf weniger Bytes zu verteilen.
+Höhere Kompressionsgrade erhält man hingegen mit verlustbehafteter Kompression. Dabei wird das Informationsgut in Klassen verschiedener Wichtigkeit aufgeteilt, um so von einem bestimmten Grad an Details -- im Tausch gegen reduzierten Speicherbedarf -- absehen zu können. Diese Aufteilung der Informationen in Detailstufen wird als Wavelet-Transformation bezeichnet. Neben der Möglichkeit den benötigten Speicherplatz beliebig zu verkleinern bringt sie weitere Vorteile mit sich. So kann zum Beispiel bei graphischen Anwendungen zwischen Rechenzeit und Detailliertheit vermittelt werden.\\
+Es sollen hier nun das mathematische Grundgerüst, die Multiskalenanalyse, sowie die Bildkompression am Beispiel von Haar-Wavelets und graphische Anwendungen am Beispiel von B-Splines vorgestellt werden.
