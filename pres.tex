@@ -12,6 +12,14 @@
 \usepackage{subcaption}
 \usepackage{xspace}
 
+
+\newlength\mylen
+\usepackage{array}
+\newcolumntype{C}[1]{>{\hfil$}p{#1}<{$\hfil}}
+
+\usepackage{adjustbox}
+\usepackage{arydshln}
+
 \definecolor{lblue}{RGB}{0, 153, 255}
 \definecolor{Bg}{HTML}{f8f8f8}
 \definecolor{A}{HTML}{54c9f5}%00adef}
@@ -27,7 +35,6 @@
 \setlength\fboxrule{2pt}
 
 \newcommand{\blankframe}{{\setbeamercolor{background canvas}{bg=black}\frame[plain]{}}}
-
 
 \title{Wavelet-Kompression und Multiskalenanalyse}
 \subtitle{Vortrag zum Thema `Mathematik in Computerspielen'}
@@ -72,7 +79,7 @@
 %		
 %		Enable the theme by loading
 %		
-%		\begin{verbatim}    \documentclass{beamer}
+ %		\begin{verbatim}    \documentclass{beamer}
 %		\usetheme{metropolis}\end{verbatim}
 %		
 %		Note, that you have to have Mozilla's \emph{Fira Sans} font and XeTeX

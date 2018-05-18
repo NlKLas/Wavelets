@@ -38,6 +38,9 @@ class ImageLoadedState:
         self.num_coefficients = self.total_num_coefficients
         
         
+        self.x_worst_case = np.linspace(0,1,1000)
+        self.y_worst_case = np.sqrt(1 - self.x_worst_case)
+        
         
         self.img_fig = Figure()
         self.plot_fig = Figure()
@@ -79,6 +82,8 @@ class ImageLoadedState:
         self.plot_ax.set_title('Relative $L^2$-Error: {0:.2f}%'.format(p[1]*100))
         
         self.plot_ax.plot(self.curve_approx[:,0], self.curve_approx[:,1], color='blue')
+        
+        self.plot_ax.plot(self.x_worst_case, self.y_worst_case, color='black', ls='--')
         self.plot_ax.set_xlabel('Fraction of Coefficients Used')
         self.plot_ax.set_ylabel('Relative $L^2$-Error')
         self.plot_ax.grid()

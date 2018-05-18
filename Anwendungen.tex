@@ -5,17 +5,21 @@
 \subsubsection{Algorthimen für Haar-Analyse und Synthese}
 %
 \paragraph{1D Signale}~\\
-Nun geht es um die konkrete Realisierung einer Filterbank für Analyse und Synthese von Signalen. Da es sich bei der Haar-Basis um eine Orthonormalbasis handelt, läge es auf Anhieb nahe, die Koeffizienten einfach über ein Skalarprodukt mit der entsprechenden Basisfunktion zu berechnen. Da alle betracheten Funktionen stückweise konstant sind, wäre ein solches Vorgehen prinzipiell machbar, es stellt sich aber heraus, dass man auf diese Weise einige Zwischneergebnisse mehrfach berechnet, was eine relative hohe Laufzeit zur Folge hat. Einen effizienteren Algorithmus erhält man, indem man sich stärker an den konzeptionellen Ablauf der Filterbank hält und das Signal schrittweise analysiert.
+Nun geht es um die konkrete Realisierung einer Filterbank für Analyse und Synthese von Signalen. Da es sich bei der Haar-Basis um eine Orthonormalbasis handelt, läge es auf Anhieb nahe, die Koeffizienten einfach über ein Skalarprodukt mit der entsprechenden Basisfunktion zu berechnen. Da alle betracheten Funktionen stückweise konstant sind, wäre ein solches Vorgehen prinzipiell machbar, es stellt sich aber heraus, dass man auf diese Weise einige Zwischneergebnisse mehrfach berechnet, was eine relative hohe Laufzeit zur Folge hat. Einen effizienteren Algorithmus erhält man, indem man sich stärker an den konzeptionellen Ablauf der Filterbank hält und das Signal schrittweise analysiert.\\
 %
-Ein Signal liege in Form einer Liste von $2^j$ Werten vor, welche die Koeffizienten der Approximation des Signals durch die Skalierungsfunktionen im Raum $V^j$ darstellen. Ein Schritt des Filterbank-Algorithmus erhält diese Liste als Input und gibt die Approximation des Signals durch $2^{j-1}$ Koeffizienten im Raum $V^{j-1}$, sowie $2^{j-1}$ zugehörige Detailkoeffizienten des Waveletraums $W^{j-1}$ aus. Die genaue Berechnungsvorschrift hierfür erhält man aus den Beziehungen der Skalierungsfunktionen und Waveletfunktionen auf Level $(j-1)$ und den Skalierungsfunktionen auf Level $j$. Offenbar gilt:
+Die Approximation eines Signales liege in Form einer Liste $C$ von $2^j$ Koeffizienten bezüglich der Skalierungsfunktionenbasis des Raumes $V^j = V^{j-1} \oplus W^{j-1}$ vor. Ein Schritt des zu implementierenden Filterbank-Algorithmus erhälte nun eine solche Liste $C$ und führte eine Basistransformation durch, sodass eine Liste $C'$ gleicher Länge entsteht, deren erste $2^{j-1}$ Einträge die Koeffizienten bezüglich der Skalierungsfunktionenbasis von $V^{j-1}$ darstellen, während die übrigen $2^{j-1}$ Einträge die Koeffizienten bezüglich der zugehörigen Waveletbasis von $W^{j-1}$ sind.\\
+Die genaue Berechnungsvorschrift hierfür erhält man aus den Beziehungen der Skalierungsfunktionen $(\phi_{i}^{j-1})_{i=0}^{2^{j-1}-1}$ und Waveletfunktionen $(\psi_{i}^{j-1})_{i=0}^{2^{j-1}-1}$ auf Level $(j-1)$ und den Skalierungsfunktionen $(\phi_{i}^{j})_{i=0}^{2^{j}-1}$ auf Level $j$. Für $i = 0, 1, ..., 2^{j-1}-1$ gilt:
 %
 \[
 \phi_{i}^{j-1} = \frac{1}{\sqrt{2}}( \phi_{2i}^{j} + \phi_{2i+1}^{j} )
 \qquad , \qquad
 \psi_{i}^{j-1} = \frac{1}{\sqrt{2}}( \phi_{2i}^{j} - \phi_{2i+1}^{j} )
+,
 \]
-bzw.
+oder in Matrixschreibweise:
 \[
+\left[ \phi\psi \right]_{i}^{j-1}
+:=
 \begin{pmatrix}
 \phi_{i}^{j-1} \\
 \psi_{i}^{j-1}
@@ -36,44 +40,75 @@ bzw.
 \phi_{2i}^{j} \\
 \phi_{2i+1}^{j}
 \end{pmatrix}
+=:
+\mathbf{M}
+\left[ \phi\phi \right]_{i}^j
 .
 \]
 %
-(\textbf{BILD!!!}) Diese Beziehungen Charakterisieren die Synthesematrizen $\mathbf{P}$ und $\mathbf{Q}$ aus der theoretischen Behandlung. Wie man leicht sieht ist die Matrix $\mathbf{M}$ selbstinvers. Für die umgekehrte Beziehung erhält man folglich ebenfalls:
+(\textbf{BILD!!!}) Diese Beziehungen leifern eine vollständige Charakterisierung des Basiswechsels, aus ihnen ließen sich zum Beispiel auch die Synthesematrizen $\mathbf{P}^j$ und $\mathbf{Q}^j$ aus der theoretischen Behandlung ableiten.\\
+Wie man leicht sieht, ist die Matrix $\mathbf{M}$ selbstinvers. Für die umgekehrte Beziehung erhält man folglich für $i = 0, 1, ..., 2^{j-1}-1$ ebenfalls:
 %
 \[
-\begin{pmatrix}
-\phi_{2i}^{j} \\
-\phi_{2i+1}^{j}
-\end{pmatrix}
+\left[ \phi\phi \right]_{i}^j
 =
 \mathbf{M}
-\begin{pmatrix}
-\phi_{i}^{j-1} \\
-\psi_{i}^{j-1}
-\end{pmatrix}
+\left[ \phi\psi \right]_{i}^{j-1}
 .
 \]
 %
-Die Koeffiziententransformation ist daher in beiden Fällen die selbe, man erhält:
+Die Koeffiziententransformation ist daher für einen Analyse-Schritt bzw. für einen Synthese-Schritt in beiden Fällen die selbe, nämlich eine Rechtsmultiplikation mit $\mathbf{M}$, denn für $i = 0, 1, ..., 2^{j-1}-1$ gilt:
 %
 \[
 \begin{pmatrix}
 a & b
 \end{pmatrix}
-\mapsto
+\left[ \phi\psi \right]_{i}^{j-1}
+=
+\underbrace{
 \begin{pmatrix}
 a & b
 \end{pmatrix}
 \mathbf{M}
+}_{
+\begin{pmatrix}
+a' & b'
+\end{pmatrix}
+}
+\left[ \phi\phi \right]_{i}^j
+\qquad \mbox{und} \qquad
+\begin{pmatrix}
+a' & b'
+\end{pmatrix}
+\left[ \phi\phi \right]_{i}^j
+=
+\underbrace{
+\begin{pmatrix}
+a' & b'
+\end{pmatrix}
+\mathbf{M}
+}_{
+\begin{pmatrix}
+a & b
+\end{pmatrix}
+}
+\left[ \phi\psi \right]_{i}^{j-1}
+\]
+%
+\[
+\mbox{mit} \qquad \qquad
+\begin{pmatrix}
+x & y
+\end{pmatrix}
+\mathbf{M}
 =
 \begin{pmatrix}
-\frac{a+b}{\sqrt{2}} & \frac{a-b}{\sqrt{2}}
+\frac{x+y}{\sqrt{2}} & \frac{x-y}{\sqrt{2}}
 \end{pmatrix}
 .
 \]
 %
-Konkret erhält man hieraus die folgenden Funktionen für die Durchführung eines Analyse- bzw. Synthese-Schritts:
+Konkret folgen hieraus für einen Analyse-Schritt des Filterbank-Algorithmus und den inversen Synthese-Schritt die folgenden Implementierungen der Basiswechsel. $C$ und $C'$ sind dabei Listen von Koeffizienten, wie sie weiter oben eingeführt wurden.
 
 \begin{adjustbox}{max width=\textwidth ,center}
 \begin{tabular}{p{.575\textwidth}|p{.575\textwidth}}
@@ -100,10 +135,7 @@ def synthesisStep(C'):
 \end{tabular}
 \end{adjustbox}
 
-\noindent Die Listen sind dabei so zu interpretieren, dass \texttt{C} die Koeffizienten bzgl. der $\phi^{j}$ enthält und \texttt{C'} die Koeffizienten bzgl. der $\phi^{j-1}$ in der vorderen Hälfte, sowie die zugehörigen Detailkoeffizienten zu den $\psi^{j-1}$ in der hinteren Hälfte.\\
-Eine vollständige Wavelet-Transformation erhält man dann durch rekursive Analyse der $\phi^{j}$-Koeffizienten, die Rücktransformation entsprechend durch widerholte Syntheseschritte:
-\\
-\textbf{Erwähne ich die Normalisierung? -- notwendig, wenn Sample-Werte gegeben, da die Skalierungsfunktionen nicht den Wert 1 haben.}
+\noindent Eine vollständige Wavelet-Transformation erhält man dann durch rekursive Analyse der $\phi^{j}$-Koeffizienten, die Rücktransformation entsprechend durch widerholte Synthese-Schritte:
 
 \begin{adjustbox}{max width=\textwidth ,center}
 \begin{tabular}{p{.575\textwidth}|p{.575\textwidth}}
@@ -130,11 +162,12 @@ def synthesis(C'):
 \end{tabular}
 \end{adjustbox}
 
-\noindent Ein Analyse- bzw. Syntheseschritt eines Signals der Länge $m$ benötigt $m$ Operationen innerhalb der Schleife. Für eine vollständige Analyse bzw. Synthese eines Signals der Länge $n=2^k$ werden $k$ Teilschritte zu den Teillängen $2^k, 2^{k-1}, ... 2^2, 2$ durchgeführt. Die Gesamtkomplexität beläuft sich damit auf $\sum_{i=1}^k 2^i = 2^{k+1}-2 = (2n-2)$ Operationen.
+\noindent \textbf{Zur Laufzeit:} Ein Analyse- bzw. Synthese-Schritt eines Signals der Länge $m$ benötigt von der Größenordnung $m$ Operationen innerhalb der Schleife. Für eine vollständige Analyse bzw. Synthese eines Signals der Länge $n=2^k$ werden $k$ Teilschritte zu den Teillängen $2^k, 2^{k-1}, ... 2^2, 2$ durchgeführt. Die Gesamtkomplexität beläuft sich damit auf $\sum_{i=1}^k 2^i = 2^{k+1}-2 = (2n-2)$ Operationen.
 %
 \paragraph{2D Signale bzw. Bilder}~\\
-Für 2D Signale muss zwischen der Standard- und der Nicht-Standard-Basis unterschieden werden. Für beide sind Analyse und Synthese allerdings relativ einfach zu Implementieren und bauen auf den Algorithmen für den 1D Fall auf.
-Die Analyse bzgl. der Standardbasis, welche aus den Tensorprodukten der eindimensionalen Skalieungsfunktionen und Wavelets aufgebaut ist, kann in zwei Schritten mit Hilfe der eindimensionalen Analyse durchgeführt werden. Die Idee dahinter ist, die Analyse erst bezüglich der einen Achse und danach bezüglich der anderen Achse durchzuführen. Dies ist möglich, da die Basisfunktionen faktorisieren.
+Für 2D Signale muss zwischen der Standard- und der Nicht-Standard-Basis unterschieden werden. Für beide sind Analyse und Synthese allerdings relativ einfach zu Implementieren und bauen auf den Algorithmen für den eindimensionalen Fall auf.
+
+\subparagraph{Standard-Basis} Die Analyse bzgl. der Standard-Basis, welche aus den Tensorprodukten der eindimensionalen Skalieungsfunktionen und Wavelets aufgebaut ist, kann in zwei Schritten mit Hilfe der eindimensionalen Analyse durchgeführt werden. Die Idee dahinter ist, die Analyse erst bezüglich der einen Achse und danach bezüglich der anderen Achse durchzuführen.
 %
 \[
 \begin{array}{ccc}
@@ -146,7 +179,7 @@ Die Analyse bzgl. der Standardbasis, welche aus den Tensorprodukten der eindimen
 \vdots & \vdots & \vdots & \ddots \\
 \end{array}
 } &
-\longrightarrow &
+\overset{\mbox{\small \textbf{I}}}{\longrightarrow} &
 {
 \begin{array}{cccc}
 \phi_0^0(x)\phi_0^0(y) & \psi_0^0(x)\phi_0^0(y) & \psi_0^1(x)\phi_0^0(y) & \hdots \\
@@ -157,7 +190,7 @@ Die Analyse bzgl. der Standardbasis, welche aus den Tensorprodukten der eindimen
 } \\
  &
  &
-\big\downarrow \\[.25cm]
+\big\downarrow \mbox{\small \textbf{II}} \\[.25cm]
  &
  &
 {
@@ -171,7 +204,7 @@ Die Analyse bzgl. der Standardbasis, welche aus den Tensorprodukten der eindimen
 \end{array}
 \]
 %
-Die Synthese funktioniert analog in umgekehrter Richtung. Man erhält:
+Jede Zeile des Bildes wird dabei zunächst als eindimensionales Signal interpretiert. Eine Separate Transormation der Zeilen entspricht dann dem Basiswechsel \textbf{I}. Interpretiert man nun jede Spalte des so transformierten Bildes als eindimensionales Signal und führt für jede Spalte separat eine Transformation durch, so entspricht dies dem Basiswechsel \textbf{II}. Die Komposition von Basiswechsel \textbf{I} und \textbf{II} ergeben aber gerade einen Basiswechsel zur Standard-Haar-Wavelet-Basis. Entsprechend erhält man somit eine Algorithmus zum Durchführen der Analyse. Die Synthese funktioniert analog in umgekehrter Richtung. Man erhält:
 
 \begin{adjustbox}{max width=\textwidth ,center}
 \begin{tabular}{p{.575\textwidth}|p{.575\textwidth}}
@@ -198,19 +231,19 @@ def standardSynthesis(C'):
 \end{tabular}
 \end{adjustbox}
 
-\noindent Für ein Bild mit $n \times n$ Pixeln werden in Analyse und Synthese je $n-$mal die eindimensionnale Analyse und Synthese aufgerufen. Die Komplexität der Operationen liegt daher je bei $n(2n-2) + n(2n-2) = 4n^2-4n$.
-\\
-Für die Nicht-Standard-Basis ist die Situation ein wenig komplizierter. Es stellt sich aber heraus, dass auch hier ein Teil der Funktionen aus dem eindimensionalen Fall wiederverwendet werden können.\\
-Wie im eindimensionalen Fall steht zu Beginn die Beziehung zwischen den Skalierungsfunktionen auf Level $j$ und den Skalierungsfunktionen und Wavelets auf Level $(j-1)$. Hier gilt:
-%
-%\begin{align*}
-%\phi\phi_{k,l}^{j-1} = \frac{1}{2} \phi\phi_{2k,2l}^{j} + \frac{1}{2} \phi\phi_{2k+1,2l}^{j} + \frac{1}{2} \phi\phi_{2k,2l+1}^{j} + \frac{1}{2} \phi\phi_{2k+1,2l+1}^{j} \\
-%\phi\psi_{k,l}^{j-1} = \frac{1}{2} \phi\phi_{2k,2l}^{j} - \frac{1}{2} \phi\phi_{2k+1,2l}^{j} + \frac{1}{2} \phi\phi_{2k,2l+1}^{j} - \frac{1}{2} \phi\phi_{2k+1,2l+1}^{j} \\
-%\psi\phi_{k,l}^{j-1} = \frac{1}{2} \phi\phi_{2k,2l}^{j} + \frac{1}{2} \phi\phi_{2k+1,2l}^{j} - \frac{1}{2} \phi\phi_{2k,2l+1}^{j} - \frac{1}{2} \phi\phi_{2k+1,2l+1}^{j} \\
-%\psi\psi_{k,l}^{j-1} = \frac{1}{2} \phi\phi_{2k,2l}^{j} - \frac{1}{2} \phi\phi_{2k+1,2l}^{j} - \frac{1}{2} \phi\phi_{2k,2l+1}^{j} + \frac{1}{2} \phi\phi_{2k+1,2l+1}^{j}
-%\end{align*}
+\noindent Für ein Bild mit $n \times n$ Pixeln werden in Analyse und Synthese zweimal je $n-$mal die eindimensionnale Analyse und Synthese aufgerufen. Die Komplexität der Operationen liegt daher je bei $n(2n-2) + n(2n-2) = 4n^2-4n$.
+
+% Ich bin mit dieser Abhandlung noch nicht wirklich zufrieden.... aber es sollte wohl reichen.....
+% Was irgendwie noch fehlt ist eine Behandlung der eigendlichen n x n Koeffizientenlisten, welche
+% sukzessive transformiert werden. Ich denke, dieser Aspekt sollte ein zentraler Punkt im Vortrag 
+% werden. Wenn ich mir diesbezüglich etwas Schönes ausgedacht haben, kann ich es hier vielleicht noch
+% einbringen...
+\subparagraph{Nicht-Standard-Basis} Für die Nicht-Standard-Basis ist die Situation ein wenig komplizierter. Es stellt sich aber heraus, dass auch hier ein Teil der Routinen aus dem eindimensionalen Fall wiederverwendet werden können. Ausgangspunkt ist in diese Fall eine zweidimensionale $n \times n$ Liste $C$ von Koeffizienten bezüglich der $n^2$ Basisfunktionen, Ziel ist ein Basiswechsel in die Nicht-Standard-Haar-Wavelet-Basis.\\
+Wie im eindimensionalen Fall steht zu Beginn die Beziehung zwischen den Skalierungsfunktionen auf Level $j$ und den Skalierungsfunktionen und Wavelets auf Level $(j-1)$. Hier gilt für $k, l = 0, 1, ..., 2^{j-1}-1$:
 %
 \[
+\left[ \phi\psi \right]_{k,l}^{j-1}
+:=
 \begin{pmatrix}
 \phi\phi_{k,l}^{j-1} \\
 \psi\phi_{k,l}^{j-1} \\
@@ -238,20 +271,39 @@ Wie im eindimensionalen Fall steht zu Beginn die Beziehung zwischen den Skalieru
 \phi\phi_{2k,2l+1}^{j} \\
 \phi\phi_{2k+1,2l+1}^{j} \\
 \end{pmatrix}
+=:
+\mathbf{M}
+\left[ \phi\phi \right]_{k,l}^j
 \]
 %
-Notiert man die Koeffizienten bzgl. $\phi\phi_{2k,2l}^{j}, \phi\phi_{2k+1,2l}^{j}, \phi\phi_{2k,2l+1}^{j}, \phi\phi_{2k+1,2l+1}^{j}$ in einem quadratischen Schema, welches der Anordnung der Träger der Basisfunktionen entspricht, d.h.
+Dieser Zusammenhang ist einfacher zu verstehen, wenn man eine etwas andere Schreibweise einführt. Genauer wird eine alternative Schreibweise für Koeffizienten-Spaltenvektoren verwendet, bei der die Anordnung der Einträge ihrer relativen Position in der zweidimensionalen Koeffizientenliste $C$ entspricht:
 %
 \[
 \begin{array}{c|c}
-\phi\phi_{2k,2l}^{j} & \phi\phi_{2k+1,2l}^{j} \\[.05cm] 
+a & b \\[.05cm] 
 \hline \\[-0.35cm]
-\phi\phi_{2k,2l+1}^{j} & \phi\phi_{2k+1,2l+1}^{j}
+c & d
 \end{array}
-,
+:=
+\begin{pmatrix}
+a & b & c & d
+\end{pmatrix}
+\qquad \mbox{, sodass} \qquad
+\begin{pmatrix}
+a & b & c & d
+\end{pmatrix}
+\left[ \phi\phi \right]_{k,l}^j
+=
+\begin{array}{c|c}
+a & b \\[.05cm] 
+\hline \\[-0.35cm]
+c & d
+\end{array}
+\left[ \phi\phi \right]_{k,l}^j
+.
 \]
 %
-so wird die Beziehung noch klarer: \textbf{(Stelle sicher, dass die Darstellung konsistent ist!!!)}
+Drückt man die obige Beziehung auf diese Weise aus, so erhält man: \textbf{(Stelle sicher, dass die Darstellung konsistent ist!!!)}
 %
 \begin{align*}
 \phi\phi_{k,l}^{j-1} &=
@@ -261,6 +313,7 @@ so wird die Beziehung noch klarer: \textbf{(Stelle sicher, dass die Darstellung 
 \hline \\[-0.35cm]
 1 & 1
 \end{array}
+\left[ \phi\phi \right]_{k,l}^j
 \quad , &
 \psi\phi_{k,l}^{j-1} &=
 \frac{1}{2} \times
@@ -269,6 +322,7 @@ so wird die Beziehung noch klarer: \textbf{(Stelle sicher, dass die Darstellung 
 \hline \\[-0.35cm]
 1 & -1
 \end{array}
+\left[ \phi\phi \right]_{k,l}^j
 \quad , \\
 \phi\psi_{k,l}^{j-1} &=
 \frac{1}{2} \times
@@ -277,6 +331,7 @@ so wird die Beziehung noch klarer: \textbf{(Stelle sicher, dass die Darstellung 
 \hline \\[-0.35cm]
 -1 & -1
 \end{array}
+\left[ \phi\phi \right]_{k,l}^j
 \quad , &
 \psi\psi_{k,l}^{j-1} &=
 \frac{1}{2} \times
@@ -285,12 +340,13 @@ so wird die Beziehung noch klarer: \textbf{(Stelle sicher, dass die Darstellung 
 \hline \\[-0.35cm]
 -1 & 1
 \end{array}
+\left[ \phi\phi \right]_{k,l}^j
 \quad .
 \end{align*}
 %
-Der Einfachheit halber wird diese Notation auch für die Koeffizienten bzgl. $\phi\phi_{k,l}^{j-1}, \psi\phi_{k,l}^{j-1}, \phi\psi_{k,l}^{j-1}, \psi\psi_{k,l}^{j-1}$ übernommen.
+Stellt man nun fest, dass die Anordnung der Koeffizienten gerade der Anordung der Träger der Einträge von $\left[ \phi\phi \right]_{k,l}^j$ entspricht, so ergibt sich die Beziehung anschaulich aus der Form der dargestellten Funktionen.\\
 %
-Wie man leicht nachprüft ist die Matrix $\mathbf{M}$ selbsinvers. Analog zum eindimensionalen Fall ergibt sich somit eine symmetrische Koeffiziententransformation, die in diesem Fall durch Rechtsmultiplikation mit $\mathbf{M}$ gegeben ist:
+Wie man leicht nachprüft ist die Matrix $\mathbf{M}$ wieder selbsinvers. Analog zum eindimensionalen Fall ergibt sich somit eine symmetrische Koeffiziententransformation durch Rechtsmultiplikation mit $\mathbf{M}$:
 %
 \[
 \begin{array}{c|c}
@@ -298,13 +354,64 @@ a & b \\[.05cm]
 \hline \\[-0.35cm]
 c & d
 \end{array}
-\xrightarrow[]{\mathbf{M}}
+\left[ \phi\psi \right]_{k,l}^{j-1}
+=
+\underbrace{
+\begin{array}{c|c}
+a & b \\[.05cm] 
+\hline \\[-0.35cm]
+c & d
+\end{array}
+\mathbf{M}
+}_{
+\begin{array}{c|c}
+a' & b' \\[.05cm] 
+\hline \\[-0.35cm]
+c' & d'
+\end{array}
+}
+\left[ \phi\phi \right]_{k,l}^j
+\qquad \mbox{und} \qquad
+\begin{array}{c|c}
+a' & b' \\[.05cm] 
+\hline \\[-0.35cm]
+c' & d'
+\end{array}
+\left[ \phi\phi \right]_{k,l}^{j}
+=
+\underbrace{
+\begin{array}{c|c}
+a' & b' \\[.05cm] 
+\hline \\[-0.35cm]
+c' & d'
+\end{array}
+\mathbf{M}
+}_{
+\begin{array}{c|c}
+a & b \\[.05cm] 
+\hline \\[-0.35cm]
+c & d
+\end{array}
+}
+\left[ \phi\psi \right]_{k,l}^{j-1}
+\]
+%
+\[
+\mbox{mit} \qquad \qquad
+\begin{array}{c|c}
+t & u \\[.05cm] 
+\hline \\[-0.35cm]
+v & w
+\end{array}
+\mathbf{M}
+=
 \frac{1}{2} \times
 \begin{array}{c|c}
-a+b+c+d & a-b+c-d \\[.05cm] 
+t+u+v+w & t-u+v-w \\[.05cm] 
 \hline \\[-0.35cm]
-a+b-c-d & a-b-c+d
+t+u-v-w & t-u-v+w
 \end{array}
+.
 \]
 %
 %\noindent Für $\mathbf{M}$ ergibt sich folgende Faktorisierung:
@@ -372,14 +479,14 @@ a+b-c-d & a-b-c+d
 %\end{pmatrix}
 %\end{align*}
 %
-$\mathbf{M}$ lässt sich in zwei kommutierende Matrizen $\mathbf{M}_x$ und $\mathbf{M}_y$ Faktorisieren. Wie die Bezeichnung suggestiert, handelt es sich dabei jeweils um einen Schritt der eindimensionalen Transformation, einmal entlang jeder Achse:
+$\mathbf{M}$ lässt sich in zwei kommutierende Matrizen $\mathbf{M}_x$ und $\mathbf{M}_y$ Faktorisieren. Wie die Bezeichnung suggestiert, handelt es sich dabei jeweils um einen Schritt der eindimensionalen Transformation, welche jeweils einmal entlang jeder Zeile des Koeffizientenfeldes für $\mathbf{M}_x$ und einmal entlang jeder Spalte für $\mathbf{M}_y$ durchgeführt wird:
 %
 \[
 \begin{array}{ccc}
 \begin{array}{c|c}
-a & b \\[.05cm] 
+t & u \\[.05cm] 
 \hline \\[-0.35cm]
-c & d
+v & w
 \end{array}
 &
 \begin{array}{c}
@@ -388,18 +495,28 @@ c & d
 &
 \frac{1}{\sqrt{2}} \times
 \begin{array}{c|c}
-a\boldsymbol{+}b & a\boldsymbol{-}b \\[.05cm] 
+t\boldsymbol{+}u & t\boldsymbol{-}u \\[.05cm] 
 \hline \\[-0.35cm]
-c\boldsymbol{+}d & c\boldsymbol{-}d
+v\boldsymbol{+}w & v\boldsymbol{-}w
 \end{array}
 \\[.5cm]
- & & \big\downarrow \mathbf{M}_y \\[.25cm]
- & &
+\big\downarrow \mathbf{M}_y & & \big\downarrow \mathbf{M}_y \\[.25cm]
+\frac{1}{\sqrt{2}} \times
+\begin{array}{c|c}
+t\boldsymbol{+}v & u\boldsymbol{+}w \\[.05cm] 
+\hline \\[-0.35cm]
+t\boldsymbol{-}v & u\boldsymbol{-}w
+\end{array}
+&
+\begin{array}{c}
+ \\[-0.3cm] \mathbf{M}_x \\[-0.1cm] \longrightarrow \\ \\
+\end{array}
+&
 \frac{1}{2} \times
 \begin{array}{c|c}
-(a+b)\boldsymbol{+}(c+d) & (a-b)\boldsymbol{+}(c-d) \\[.05cm] 
+(t+u)\boldsymbol{+}(v+w) & (t-u)\boldsymbol{+}(v-w) \\[.05cm] 
 \hline \\[-0.35cm]
-(a+b)\boldsymbol{-}(c+d) & (a-b)\boldsymbol{-}(c-d)
+(t+u)\boldsymbol{-}(v+w) & (t-u)\boldsymbol{-}(v-w)
 \end{array}
 \\
 \end{array}
@@ -438,22 +555,25 @@ def nonstandardSynthesis(C'):
 \end{tabular}
 \end{adjustbox}
 
-\noindent Die Laufzeitkomplexität der Operationen ergibt damit sich zu 
+\noindent Die Laufzeitkomplexität der Routinen für $n \times n$ Listen mit $n=2^k$ ergibt damit sich zu 
 %
 \[
-\sum_{i=1}^k 2^{2i} + 2^{2i} 
+\sum_{i=1}^k 2^i 2^i + 2^i 2^i
+= \sum_{i=1}^k 2^{2i} + 2^{2i} 
 = 2\sum_{i=1}^k 4^i 
 = 8\sum_{i=0}^{k-1} 4^i 
 = 8\frac{4^k-1}{4-1} 
 = \frac{8}{3}((2^k)^2-1) 
-= \frac{8}{3}(n^2-1) ,
+= \frac{8}{3}(n^2-1)
+.
 \]
 %
-wobei das Bild die Dimensionen $n \times n$ mit $n=2^k$ habe. Die Nicht-Standard-Transformation ist somit etwas schneller als die Standard-Transformation.
+Die Nicht-Standard-Transformation ist somit etwas schneller als die Standard-Transformation.
 %
+% Wenn noch Zeit zu füllen ist, könnte es hier noch interessant sein zu zeigen, dass es auch 'Bilder'
+% gibt, die sich auf diese Weise bezüglich der Haar-Basis nur schlecht komprimieren lassen.
+% Eine solche Kompressionsstrategie kann immer nur für eine gewisse Klasse von Signalen funktionieren.
 \subsubsection{Kompression}~\\
-%Die einfachste Art ein Bild (oder irgendein anderes diskretes Signal) zu speichern bzw. zu representieren, besteht darin, für jeden Pixel einen Wert anzugeben. Gewissermaßen entspricht dies in dem bisherigen Bild einer Angabe der Koeffizienten bezüglich hochauflösender Haar-Skalierungsfuntionen. Ein Bild mit $n \times n$ Pixeln wird auf diese Weise durch $n^2$ Koeffizienten dargestellt. Das Ziel von Kompression ist es nun, eine Representation des Bildes zu finden, die mit weniger Koeffizienten auskommt, bzw. die das Bild mit weniger Koeffizienten so gut wie möglich approximiert. Ein Ansatz hierfür ist es, das Bild als Koeffizientenvektor $\mathbf{c} = (c_1, ..., c_{n^2})$ bezüglich einer Orthonormalbasis $(\mathbf{b}_1, ..., \mathbf{b}_{n^2})$ des Raumes aller Bilder (bzw. diskreter Signale) mit gegebener Auflösung unter Verwendung eines Skalarproduktes, dessen induzierte Metrik ein passendes Maß für einen Approximationsfehler liefert, darzustellen. Lässt man in dieser Situation einige Koeffizienten weg, d.h. setzt diese auf 0, so ergibt sich eine Kompression des Bildes mit mehr oder weniger gutem Approximationsfehler. Genauer:
-%
 Das Ziel von Kompression ist die möglicherweise verlustbehaftete Darstellung eines Signals mit Hilfe möglichst weniger Bits. Im Folgenden soll auf einen möglichen Ansatz zum Erreichen dieses Ziels eingegangen werden.
 Konkret werden hier Signale betrachtet, die sich als Elemente eines endlichdimensionalen Vektorraums mit einem Skalarprodukt, dessen induzierte Metrik ein passendes Maß für einen Approximationsfehler solcher Signale liefert, auffassen lassen. Wenn $m$ die Dimension dieses Vektorraumes ist, so werden im allgemeinen $m$ Koeffizienten bezüglich einer beliebigen Basis benötigt, um ein beliebiges Signal darzustellen. Ein einfacher Ansatz zur verlustbehafteten Kompression besteht darin, einige dieser Koeffizienten wegzulassen, d.h. auf Null zu setzen. Wie groß der hierdurch verursachte Approximationfehler ist, hängt im Allgemeinen nicht nur von der Größe der weggelassenen Koeffizienten, sondern auch von der gewählten Basis ab. Für Orthonoramalbasen ergibt sich ein besonders einfacher Zusammenhang: Sei $I=\{1,...,m\}$ die Indexmenge zum indizieren der Basis, $f=\sum_{i \in I} c_i \mathbf{b}_i$ ein Vektor representiert durch Koeffizienten $(c_i)$ bezüglich einer Orthonormalbasis $(\mathbf{b}_i)$ und $\tilde{f}=\sum_{i \in \tilde{I}} c_i \mathbf{b}_i$, wobei $\tilde{I} \subset I$, eine Approximation des Vektors. Der Approximationsfehler ergibt sich zu:
 %
@@ -467,18 +587,9 @@ Konkret werden hier Signale betrachtet, die sich als Elemente eines endlichdimen
 \]
 %
 Er hängt im Fall einer Orthonormalbasis also nur von der Größe der weggelassenen Koeffizienten ab. Für eine gegebene Klasse von Signalen, wie zum Beispiel Bildern, besteht die eigendliche Problemstellung für das Implementieren eines solchen Kompressionsalgorithmus in der Wahl einer Orthogonalbasis des Signalraumes, bezüglich der möglichst viele Koeffizienten betragsklein sind.\\
-Für natürliche Bilder stellt sich heraus, dass die Haar-Basis der Wavelet-Transformation eine solche Rolle einnimmt. In anderen Worten: Die Haar-Wavelet-Transformation eines natürlichen Bildes weist in den meisten Fällen viel betragskleine Einträge auf. Da es sich bei der Haar-Basis um eine Orthonormalbasis handelt, bedeutet dies, dass hohe Kompressionsraten bei vergleichsmäßig geringem Approximationsfehler durch Weglassen der Betragskleinsten Koeffizienten möglich sind. \\
+Für natürliche Bilder stellt sich heraus, dass die Haar-Basis der Wavelet-Transformation eine solche Rolle einnimmt. In anderen Worten: Die Haar-Wavelet-Transformation eines natürlichen Bildes weist in den meisten Fällen viele betragskleine Einträge auf. Da es sich bei der Haar-Basis um eine Orthonormalbasis handelt, bedeutet dies, dass hohe Kompressionsraten bei vergleichsmäßig geringem Approximationsfehler durch Weglassen der Betragskleinsten Koeffizienten möglich sind. \\
 Der Konzeptionell einfachste Algorithmus hierzu besteht schlicht darin die Koeffizienten der Wavelet-Transformation absteigend zu sortieren. Ist eine gewisse Kompressionsrate gefordert, so lässt man einfach entsprechend viele Koeffizienten vom Ende der Liste weg. Ist ein gewisser Approximationsfehler einzuhalten, so lässt man gerade so viele Koeffizienten vom Ende der Liste weg, dass die Summe der Quadrate dieser noch unterhalb der quadrierten Fehlertolleranz liegt.
 %
-%
-%
-%
-%text goes here
-%
-%An dieser Stelle stellt sich mir die Frage, wie tief ich hier bezüglich der Algorithmen gehen soll. Ich denke es macht auf der einen Seite wenig Sinn, sie einfach nur hinzuschreibe, ohne sie zu erklären, ich weiß aber auch nicht genau, wie tief ich in der Erklärung gehen soll.
-%Womit ich vermutlich (beim Schreiben!) anfangen sollte, ist die Kompression, hier kann ich auch gerne etwas mehr in die Tiefe gehen.
-%Was die Analyse- und Synthese-Algorithmen betrifft, muss ich mal gucken, ob ich das schön erklärt kriege. Am besten würde ich dann mit dem Algorithmus für 1D Signale anfangen und das ganze dann der Reihe nach aufziehen. Es ist auch nicht 100\% klar, wie ich die Verbindung zu den Basisfunktionen schlage. Diese besteht auf jeden Fall, ich sehe aber noch keinen offensichtlichen Weg, sich diese Verbindung klar zu machen.
-%Die 1D-Variante, sowie die 2D-Nonstandard-Variante entsprechen glaube ich 1-zu-1 der Filterbank, das ginge also. Die 2D-Standard-Variante könnte ich möglicherweise über mein 2-Schritt-Schema erklären. Das ist dann auch relativ intuitiv. Klingt nach einem Plan!
 
 \subsection{Multiskalen-Representation von Splinekurven}
 %
@@ -496,7 +607,7 @@ Im hier betrachteten Fall werden wir uns konkret mit uniformen endpunktinterpoli
 %
 \paragraph{Splinefunktionen und B-Spline-Kurven}~\\
 %B-Spline-Kurven der Ordnung $d$ sind Splinekurven vom Grad $(d-1)$, welche rekursiv anhand einer Sequenz von Kontrollpunkten $(\mathbf{c}_i)_{i=0}^n, \mathbf{c}_i\in\R^2$ und einer nicht abnehmenden Sequenz von Knoten $(t_i)_{i=1}^{n+d+1}, t_i\in\R$ definiert werden.
-Splinefunktionen sind bezüglich eines Knotenvektors $\mathbf{t}=(t_0,t_1,...,t_n)$ mit $t_i \le t_{i+1}$ für $i=0,1,...,n-1$ definiert und haben einen ganzzahligen Grad $d\in\N_0$. Eine Splinefunktion $S:[t_0,t_n]\rightarrow\R$ vom Grad $d$ ist $(d-1)$-mal stetig differenzierbar und hat die Eigenschaft, dass ihre Einschränkung auf die Intervalle der Form $[t_k,t_{k+1}]$ ein Polynom vom Maximalgrad $d$ ist. (Eine Splinefunktion vom Grad $1$ ist zum Beispiel stückweise linear.)\\
+Splinefunktionen sind bezüglich eines Knotenvektors $\mathbf{t}=(t_0,t_1,...,t_n)$ mit $t_i \le t_{i+1}$ für $i=0,1,...,n-1$ definiert und haben einen ganzzahligen Grad $d\in\N_0$. Eine Splinefunktion $S:[t_0,t_n]\rightarrow\R$ vom Grad $d$ ist $(d-1)$-mal stetig differenzierbar und hat die Eigenschaft, dass ihre Einschränkung auf Intervalle der Form $[t_k,t_{k+1}]$ Polynome vom Maximalgrad $d$ sind. (Eine Splinefunktion vom Grad $1$ ist zum Beispiel stückweise linear.)\\
 Die Menge aller Splinefunktionen zum Knotenvektor $\mathbf{t}$ vom Grad $d$
 %\[
 %\Sigma_{\mathbf{t},d}:=\{S\!:\![t_0,t_n]\rightarrow\R\ |\ S\!\in\!C^{(d-1)},\ S|_{[t_k,t_{k+1}]}\!\in\! \Pi_d([t_k,t_{k+1}]),\ k\!=\!0,...,n\!-\!1\}
@@ -521,9 +632,7 @@ B-Spline-Kurven vom Grad $d$ sind nun anhand von $(n+d)$ Kontrollpunkten $(\math
 \[
 \mathbf{f}(x)=\sum_{i=1}^{n+d}\mathbf{c_i}B_{i,d}(x)
 \]
-definiert. Wie sich herausstellt, besteht ein relativ intuitiver Zusammenhang zwischen der Lage der Kontrollpunkte in der Ebene und dem Verlauf der resultierenden Splinekurve. Dies ist darauf zurückzuführen, dass die hier gegebene Definition einer geometrischen Konstruktion ähnlich der von Bezier-Kurven entspricht
-%(dieser Hinweis ist nur dann sinnvoll, wenn die Gruppe vor uns Bezier-Kurven geometrisch konstruiert hat!)
-. Diese Eigenschaft macht B-Spline-Kurven zu einem idealen Werkzeug für das interaktive Design von Kurven.\\
+definiert. Wie sich herausstellt, besteht ein relativ intuitiver Zusammenhang zwischen der Lage der Kontrollpunkte in der Ebene und dem Verlauf der resultierenden Splinekurve. Dies ist darauf zurückzuführen, dass die hier gegebene Definition einer geometrischen Konstruktion ähnlich der von Bezier-Kurven entspricht. Diese Eigenschaft macht B-Spline-Kurven zu einem idealen Werkzeug für das interaktive Design von Kurven.\\
 \\
 Im weiteren betrachten wir hier eine spezielle Klasse von B-Spline-Kurven, so genannte Endpunkt-interpolierende uniforme B-Spline-Kurven. Diese ergeben sich durch eine spezielle Wahl des Knotenvektors $\mathbf{t}$, sowie der $2d$ Zusatzknoten. Für $\mathbf{t}$ wählt man eine uniforme Unterteilung des Intervalls $[0,1]$, d.h. $\mathbf{t}=(0,\frac{1}{n},\frac{2}{n},...,\frac{n-1}{n},1)$, und für die Zusatzknoten $t_{-d}=...=t_{-1}=t_0=0$ und $1=t_n=t_{n+1}=...=t_{n+d}$. Insgesamt also
 \[
@@ -531,8 +640,8 @@ Im weiteren betrachten wir hier eine spezielle Klasse von B-Spline-Kurven, so ge
 \]
 %
 \paragraph{Multiskalen-Representation spezieller B-Spline-Kurven}~\\
-Aus der folgenden Konstruktion einer Multiskalenanalyse für Splinefunktionen ergibt sich intuitiv eine Multiskalenanalyse für B-Spline-Kurven in Räumen beliebiger Dimension. Die skalaren Koeffizienten vor den  Basisfunktionen werden einfach durch entsprechende Vektoren ersetzt. 
-Die Konstruktion für Spline-Funktionene verläuft in drei Schritten: 
+Aus der folgenden Konstruktion einer Multiskalenanalyse für Splinefunktionen ergibt sich intuitiv eine Multiskalenanalyse für B-Spline-Kurven in Räumen beliebiger Dimension. Die skalaren Koeffizienten vor den  Basisfunktionen werden einfach durch entsprechende Vektoren ersetzt. \\
+Die Konstruktion für Spline-Funktionen verläuft in den drei bekannten Schritten: 
 \begin{enumerate}
 \item Wahl von Skalierungsfuntionen, die eine Folge geschachtelter Splineräume aufspannen. Dies legt die Synthese-Matrizen $\mathbf{P}^j$ fest. 
 \item Wahl eines Skalarprodukts. 
@@ -543,9 +652,9 @@ Die Splineräume vom Grad $d$ zu den Knotenvektoren
 \[
 \mathbf{t}_k=(\frac{0}{2^k},\frac{1}{2^k},...,\frac{2^k-1}{2^k},\frac{2^k}{2^k})
 \]
-für $k\in\N_0$ sind also geschachtelt und beiten sich an. Als Basis und somit als Skalierungsfunktionen werden die B-Spline-Basisfunktionen zu den modifizierten Knotenvektoren
+für $k\in\N_0$ sind also geschachtelt und beiten sich als Kandidaten an. Als Basis und somit als Skalierungsfunktionen werden die B-Spline-Basisfunktionen zu den modifizierten Knotenvektoren
 \[
-\mathbf{t}_k=(\underbrace{0,...,0}_{d},\frac{0}{2^k},\frac{1}{2^k},...,\frac{2^k-1}{2^k},\frac{2^k}{2^k},\underbrace{1,...,1}_{d})
+\mathbf{\tilde{t}}_k=(\underbrace{0,...,0}_{d},\frac{0}{2^k},\frac{1}{2^k},...,\frac{2^k-1}{2^k},\frac{2^k}{2^k},\underbrace{1,...,1}_{d})
 \]
 Gewählt.\\
 \\
@@ -558,21 +667,18 @@ verwendet. Für Polynome und Splines kann dieses symbolisch exakt berechnet werd
 Die Wahl der Waveletfunktionen auf jedem Level fällt etwas schwerer. Es stellt sich heraus, dass man entweder zueinander othogonale Spline-Wavelets mit ''größerem'' Träger oder zueinander nicht orthogonale Spline-Wavelets mit minimalem Träger konstruieren kann. Für das lokale Bearbeiten von Kurven ist die Größe des Trägers der Wavelets (wie lokal ist der Einfluss eines Detailkoeffizienten) entscheidender, man verzichtet daher auf die Orthogonalität der Spline-Wavelets untereinander. Diese Wahl führt zudem auf Synthese-Matrizen $\mathbf{Q}^j$ mit Bandstruktur, was Berechnungen beschleunigt.
 %Ein ''kleiner'' Träger bedeutet auf Grund der Form (minimaler Träger...) der B-Spline-Basisfunktionen zudem, dass die Projektionsmatix $\mathbf{W}$ eine Bandmatrix mit minimaler Anzahl von Null verschiedener Einträge ist, was Berechnungen beschleunigt.
 \\
-Die exakte Herleitung der $\mathbf{P}^j$ und $\mathbf{Q}^j$, welche die Multiskalenanalyse vollständig beschreiben, ist hier zu aufwendig, es sei auf \cite{finkelstein94} verwiesen. Der kubische Fall $d=3$ ist praktisch der relevanteste. \textbf{Im Appendix sind die hier auftretenden Synthese-Matrizen angegeben.}
+Die exakte Herleitung der $\mathbf{P}^j$ und $\mathbf{Q}^j$, welche die Multiskalenanalyse vollständig beschreiben, ist hier zu aufwendig, es sei auf \cite{finkelstein94} verwiesen. Der kubische Fall $d=3$ ist praktisch der relevanteste. %\textbf{Im Appendix sind die hier auftretenden Synthese-Matrizen angegeben.}
 %
 %für den Leser sind die Details der Implementierung der Filterbank hier zweitranging. Auf Nachfrage kann gerne darauf eingegangen werden, es ist an dieser Stelle aber einfach recht wenig hilfreich. Das zentrale Thema sind nicht die B-Splines, sondern die Multiskalenanalyse. Gleiches gilt auch für die Anwendungsbeispiele. Hier ist wichtig, dass vermittelt wird, wie diese im Rahmen der Multiskalenanalyse umgesetzt werden können, aber die genauen Implementationsdetails würde ich vermutlich wiederum weglassen und dann auf Nachfrage dazu etwas sagen. Alternativ könnte man in den Appendix auch noch den Code + Dokumentation oder zumindest Details zur Implementierung packen.
 %
 \paragraph{Anwendungsbeispiele}~\\
 Die Multiskalen-Representation der B-Spline-Kurven ermöglicht einige Anwendungen, die ansonsten auf den ersten Blick nicht trivial zu realisieren sind. Einige werden hier vorgestellt.
-\\
-Glättung von z.B. handgezeichneten Kurven.\\
-Auf Grund der Qualität heutiger Sensoren haben Kurven, wie sie zum Beispiel in einem Schreibprogramm augenommen werden, oft einen sehr hohen Detailgrad (man denke zum Beispiel an oft leicht verwackelte Handschrift \textbf{BILD!!!}). Ein hoher Detailgrad bedeutet für B-Splines eine große Zahl von Kontrollpunkten, die Kurven verbrauchen also viel Speicher und sind aufwendiger zu rendern. Eine Lösung für dieses Problem ist es den Detailgrad gezielt zu verringern indem die orsprüngliche Kurve durch eine Kurve mit weniger Kontrollpunkten approximiert wird. Die Multiskalen-Representation bietet auf natürliche Weise einen einfachen Lösungsansatz für diese Problemstellung. Hierfür werden schlicht die Detail- bzw. Wavelet-Koeffizienten höherer Level weggelassen. Das Resultat entspricht der orthogonalen Projektion der ursprünglichen Kurve auf den entsprechenden Splineraum des verringerten Detailgrades. Damit minimiert diese Approximation zugleich den Abstand zur urspünglichen Kurve bezüglich der durch das Skalarprodukt induzierten Norm/Metrik unter allen anderen kubischen enpunktinterpolierenden uniformen B-Spline-Kurven mit der selben Zahl von Kontrollpunkten.
+\begin{itemize}
+\item Glättung von z.B. handgezeichneten Kurven.\\
+Auf Grund der Qualität heutiger Sensoren haben Kurven, wie sie zum Beispiel in einem Schreibprogramm augenommen werden, oft einen sehr hohen Detailgrad (man denke zum Beispiel an oft leicht verwackelte Handschrift). Ein hoher Detailgrad bedeutet für B-Splines eine große Zahl von Kontrollpunkten, die Kurven verbrauchen also viel Speicher und sind aufwendiger zu rendern. Eine Lösung für dieses Problem ist es den Detailgrad gezielt zu verringern indem die ursprüngliche Kurve durch eine Kurve mit weniger Kontrollpunkten approximiert wird. Die Multiskalen-Representation bietet auf natürliche Weise einen einfachen Lösungsansatz für diese Problemstellung. Hierfür werden schlicht die Detail- bzw. Wavelet-Koeffizienten höherer Level weggelassen. Das Resultat entspricht der orthogonalen Projektion der ursprünglichen Kurve auf den entsprechenden Splineraum des verringerten Detailgrades. Damit minimiert diese Approximation zugleich den Abstand zur urspünglichen Kurve bezüglich der durch das Skalarprodukt induzierten Norm/Metrik unter allen anderen kubischen enpunktinterpolierenden uniformen B-Spline-Kurven mit der selben Zahl von Kontrollpunkten.
 Der Effekt einer solchen Approximation ist anschaulich eine Glättung der ursprünglichen Kurve. Eine solche kann natürlich auch aus ästhetischen Gründen erwünscht sein.
-\\
-Multilevel-Bearbeitung von Kurven anhand der Kontrollpunkte.\\
-Die Multiskalen-Representation einer B-Spline-Kurve approximiert diese im wesentlichen durch immer detailiertere Kurven, das heißt B-Spline-Kurven mit einer zunehmenden Anzahl von Kontrollpunkten. Diese Representation ermöglicht eine Bearbeitung einer Kurve auf unterschiedlichen Detail-Skalen. Die ursprüngliche Kurve wird zunächst durch den Filterbank-Algorithmus in Approximations- und Detail-Koeffizienten zerlegt. Die Approximationskoeffizienten sind gerade die Kontrollpunkte einer approximierenden B-Spline-Kurve. Bearbeitet man die approximierende Kurve anhand dieser Kontrollpunkte und wendet im Synthese-Schritt die unveränderten Detail-Koeffizienten wieder an, so hat dies den Effekt, dass sich der generelle Verlauf der Kurve ändert, die Details aber erhalten bleiben. \textbf{BILDER!!!}
-\\
-%Ich bin mir nicht ganz sicher, ob ich diesen Teil wirklich noch mit rein nehme...
-Darstellung einer Kurve auf unterschiedlichen Detailstufen.
 %
+\item Multilevel-Bearbeitung von Kurven anhand der Kontrollpunkte.\\
+Die Multiskalen-Representation einer B-Spline-Kurve approximiert diese im wesentlichen durch immer detailiertere Kurven, das heißt B-Spline-Kurven mit einer zunehmenden Anzahl von Kontrollpunkten. Diese Representation ermöglicht eine Bearbeitung einer Kurve auf unterschiedlichen Detail-Skalen. Die ursprüngliche Kurve wird zunächst durch den Filterbank-Algorithmus in Approximations- und Detail-Koeffizienten zerlegt. Die Approximationskoeffizienten sind gerade die Kontrollpunkte einer approximierenden B-Spline-Kurve. Bearbeitet man die approximierende Kurve anhand dieser Kontrollpunkte und wendet im Synthese-Schritt die unveränderten Detail-Koeffizienten wieder an, so hat dies den Effekt, dass sich der generelle Verlauf der Kurve ändert, die Details aber erhalten bleiben. 
+\end{itemize}
 %

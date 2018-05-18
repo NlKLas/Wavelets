@@ -313,8 +313,57 @@ def eval_piecewise_linear(t, data, arc_length_seq):
 
 if __name__ == "__main__":
     np.set_printoptions(linewidth=200)
-    C = np.array([9.0,7,3,5,7,4,9,0])
+    
+    img = np.ones((256,256), dtype=float)
+    img = NonstandardSynthesis(img)
+    
+    plt.imshow(img, cmap='gray')
+    plt.show()
+    
+    img = np.asarray(PIL.Image.open('lena.ppm'))    
+    img = np.mean(img, axis=2)
+    
+    test1 = np.sign(NonstandardDecomposition(img))
+    test1[test1==0] = 1
+    test1 = test1*(l2_norm(img)/np.sqrt(img.size))
+    
+    print(l2_norm(img))
+    print(l2_norm(test1))
+    
+    plt.imshow(test1, cmap='gray')
+    plt.show()
+    
+    test2 = NonstandardSynthesis(test1)
+    
+    plt.imshow(test2, cmap='gray')
+    plt.show()
+    
+    # adjust ratio here ... there is likely a better way to do this ...
+    noisy_img = test2#(1/6*test2+5/6*img)
+    
+    plt.imshow(noisy_img, cmap='gray')
+    plt.show()
+    
+    
+    transform, sort_indices = decompose_sort(noisy_img, nonstandard=True)
+    
+    cum_err2 = cumulative_squared_error(transform, sort_indices)
+    
+    x = np.linspace(1,0, len(cum_err2))
+    y = np.sqrt(cum_err2/cum_err2[-1])
+    y_worst_case = np.sqrt(1-x)
+    
+    plt.plot(x,y_worst_case, color='black', ls='--')
+    plt.plot(x,y, color='blue')
+    plt.xlabel('Fraction of Coefficients Used')
+    plt.ylabel('Relative $L^2$-Error')
+    plt.grid()
+    plt.show()
+    
+    
     '''
+    C = np.array([9.0,7,3,5,7,4,9,0])
+    
     #normalize:
     #C = C/np.sqrt(C.size)
     print(C)    
@@ -325,7 +374,8 @@ if __name__ == "__main__":
     A = Synthesis(B)
     print(A)
     '''
-    lena = np.asarray(PIL.Image.open('mona.jpg'))    
+    '''
+    lena = np.asarray(PIL.Image.open('lena.ppm'))    
     lena = np.mean(lena, axis=2)
     #lena = np.random.randint(0, 256, (256,256))
     
@@ -376,7 +426,7 @@ if __name__ == "__main__":
     #plt.imshow(lena, cmap='gray')
     #plt.show()
     #currently unnormalized...
-    
+    '''
     
     '''
     plt.imshow(StandardDecomposition(lena), cmap='gray')

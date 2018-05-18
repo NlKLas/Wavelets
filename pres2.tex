@@ -1,3 +1,286 @@
+\section{Algorithmen} {
+
+\begin{frame}{1D Haar-Wavelet-Transformation I}
+\begin{adjustbox}{max width=\textwidth ,center}
+\begin{tabular}{c}
+\settowidth\mylen{$\phi_{2i+1}^{j}$}
+$
+\begin{array}{c C{\mylen} C{\mylen} C{1.4\mylen} C{\mylen} C{\mylen} C{1.4\mylen} C{\mylen} C{\mylen}}
+&
+\phi_{0}^{j} & \phi_{1}^{j} & ... & \phi_{2i}^{j} & \phi_{2i+1}^{j} & ... & \phi_{n-2}^{j} & \phi_{n-1}^{j} \\ \cline{2-9}
+C \hphantom{'}:
+&
+\multicolumn{1}{|c}{} & 
+\multicolumn{1}{c}{} & 
+\multicolumn{1}{c}{} & 
+\multicolumn{1}{|c|}{a} & 
+\multicolumn{1}{|c|}{b} & 
+\multicolumn{1}{c}{} & 
+\multicolumn{1}{c}{} & 
+\multicolumn{1}{c|}{}
+\\ \cline{2-9}
+\end{array}
+$
+\\[-0.3cm]
+
+\settowidth\mylen{$\phi_{2i+1}^{j}$}
+$
+\begin{array}{c C{\mylen} C{\mylen} C{1.4\mylen} C{\mylen} C{\mylen} C{1.4\mylen} C{\mylen} C{\mylen}}
+ & & & & & & & & \\
+ \hphantom{C':} &  &  & \multicolumn{2}{c}{\swarrow} & \multicolumn{2}{c}{\searrow} &  &  \\
+\end{array}
+$
+\\[0.5cm]
+
+\settowidth\mylen{$\phi_{\frac{n}{2}-1}^{j-1}$}
+$
+\begin{array}{c C{\mylen} C{0.5\mylen} C{\mylen} C{0.5\mylen} C{\mylen} C{\mylen} C{0.5\mylen} C{\mylen} C{0.5\mylen} C{\mylen}}
+&
+\phi_{0}^{j-1} &
+... &
+\phi_{i}^{j-1} &
+... &
+\phi_{\frac{n}{2}-1}^{j-1} &
+\psi_{0}^{j-1} &
+... &
+\psi_{i}^{j-1} &
+... &
+\phi_{\frac{n}{2}-1}^{j} \\ \cline{2-11}
+C':
+&
+\multicolumn{1}{|c}{} & 
+\multicolumn{1}{c}{} & 
+\multicolumn{1}{|c|}{\frac{a+b}{\sqrt{2}}} & 
+\multicolumn{1}{c}{} & 
+\multicolumn{1}{c:}{} & 
+\multicolumn{1}{:c}{} & 
+\multicolumn{1}{c}{} & 
+\multicolumn{1}{|c|}{\frac{a-b}{\sqrt{2}}} & 
+\multicolumn{1}{c}{} & 
+\multicolumn{1}{c|}{}
+\\ \cline{2-11}
+\end{array}
+$
+\end{tabular}
+\end{adjustbox}
+\end{frame}
+
+\begin{frame}{1D Haar-Wavelet-Transformation II}
+
+\[
+\begin{array}{*{8}{C{0.9cm}}}
+\multicolumn{8}{c}{\vdots} \\
+\hline \multicolumn{8}{|c|}{C^3} \\ \hline
+\multicolumn{4}{r}{\swarrow} & \multicolumn{4}{l}{\searrow}\\
+\hline \multicolumn{4}{|c|}{C^2} & \multicolumn{4}{|c|}{D^2}\\ \hline
+\multicolumn{2}{r}{\swarrow} & \multicolumn{2}{l}{\searrow}\\
+\cline{1-4} \multicolumn{2}{|c|}{C^1} & \multicolumn{2}{|c|}{D^1}\\ \cline{1-4}
+\multicolumn{1}{r}{\swarrow} & \multicolumn{1}{l}{\searrow}\\
+\cline{1-2} \multicolumn{1}{|c|}{C^0} & \multicolumn{1}{|c|}{D^0}\\ \cline{1-2}
+\\ \hline
+ & & & & & & & \\
+\hline \multicolumn{1}{|c|}{C^0} & \multicolumn{1}{|c|}{D^0} & \multicolumn{2}{|c|}{D^1} & \multicolumn{4}{|c|}{D^2}\\ \hline
+\end{array}
+\]
+
+\end{frame}
+
+\begin{frame}{2D Standard-Haar-Wavelet-Transformation I}
+\begin{adjustbox}{max width=\textwidth ,center}
+\begin{tabular}{c c c}
+
+$
+\begin{array}{c|c|c|c|c}
+ \multicolumn{1}{c}{}& \multicolumn{1}{c}{\phi_{0}^{j}(x)} & \multicolumn{1}{c}{\phi_{1}^{j}(x)} & \multicolumn{1}{c}{\phi_{2}^{j}(x)} & ... \\ \cline{2-5}
+ \phi_{0}^{j}(y) & & & & \\ \cline{2-5}
+ \phi_{1}^{j}(y) & & & & \\ \cline{2-5}
+ \phi_{2}^{j}(y) & & & & \\ \cline{2-5}
+ \vdots & & & & 
+\end{array}
+$
+&
+$\overset{?}{\rightarrow}$
+&
+$
+\begin{array}{c|c|c|c|c}
+ \multicolumn{1}{c}{}& \multicolumn{1}{c}{\phi_{0}^{0}(x)} & \multicolumn{1}{c}{\psi_{0}^{0}(x)} & \multicolumn{1}{c}{\psi_{0}^{1}(x)} & ... \\ \cline{2-5}
+ \phi_{0}^{0}(y) & & & & \\ \cline{2-5}
+ \psi_{0}^{0}(y) & & & & \\ \cline{2-5}
+ \psi_{0}^{1}(y) & & & & \\ \cline{2-5}
+ \vdots & & & & 
+\end{array}
+$ 
+\\
+
+\end{tabular}
+\end{adjustbox}
+\end{frame}
+
+\begin{frame}{2D Standard-Haar-Wavelet-Transformation II}
+\begin{adjustbox}{max width=\textwidth ,center}
+\begin{tabular}{c c c}
+$
+\begin{array}{c|c|c|c|c}
+ \multicolumn{1}{c}{}& \multicolumn{1}{c}{\phi_{0}^{j}(x)} & \multicolumn{1}{c}{\phi_{1}^{j}(x)} & \multicolumn{1}{c}{\phi_{2}^{j}(x)} & ... \\ \cline{2-5}
+ \phi_{l}^{j}(y) & & & & \\ \cline{2-5}
+\end{array}
+$
+&
+$\begin{array}{c}
+\\ \overset{1D}{\longleftrightarrow} \\
+\end{array}$
+&
+$
+\begin{array}{c|c|c|c|c}
+ \multicolumn{1}{c}{}& \multicolumn{1}{c}{\phi_{0}^{0}(x)} & \multicolumn{1}{c}{\psi_{0}^{0}(x)} & \multicolumn{1}{c}{\psi_{0}^{1}(x)} & ... \\ \cline{2-5}
+ \phi_{l}^{j}(y) & & & & \\ \cline{2-5}
+\end{array}
+$ 
+\\
+\\ \hline
+\\
+$
+\begin{array}{c|c|}
+ \multicolumn{1}{c}{}& \multicolumn{1}{c}{\psi_{k}^{i}(x)} \\ \cline{2-2}
+ \phi_{0}^{j}(y) & \\ \cline{2-2}
+ \phi_{1}^{j}(y) & \\ \cline{2-2}
+ \phi_{2}^{j}(y) & \\ \cline{2-2}
+ \vdots & 
+\end{array}
+$
+&
+$\overset{1D}{\longleftrightarrow}$
+&
+$
+\begin{array}{c|c|}
+ \multicolumn{1}{c}{}& \multicolumn{1}{c}{\psi_{k}^{i}(x)} \\ \cline{2-2}
+ \phi_{0}^{0}(y) & \\ \cline{2-2}
+ \psi_{0}^{1}(y) & \\ \cline{2-2}
+ \psi_{0}^{1}(y) & \\ \cline{2-2}
+ \vdots & 
+\end{array}
+$ 
+\end{tabular}
+\end{adjustbox}
+\end{frame}
+
+\begin{frame}{2D Nicht-Standard-Haar-Wavelet-Transformation I}
+\begin{adjustbox}{max width=\textwidth, center}
+\begin{tabular}{c c c}
+\settowidth\mylen{$\phi_{2k+1}^{j}(x)$}
+$
+\begin{array}{C{\mylen}|C{\mylen}|C{\mylen}|}
+ \multicolumn{1}{c}{}& \multicolumn{1}{c}{\phi_{2k}^{j}(x)} & \multicolumn{1}{c}{\phi_{2k+1}^{j}(x)} \\ \cline{2-3}
+ \phi_{2l}^{j}(y) & & \\ \cline{2-3}
+ \phi_{2l+1}^{j}(y) & & \\ \cline{2-3}
+\end{array}
+$
+&
+$\overset{?}{\longrightarrow}$
+&
+\settowidth\mylen{$\phi_{2k+1}^{j}(x)$}
+$
+\begin{array}{C{\mylen}|C{\mylen}|C{\mylen}|}
+ \multicolumn{1}{c}{}& \multicolumn{1}{c}{\phi_{k}^{j-1}(x)} & \multicolumn{1}{c}{\psi_{k}^{j-1}(x)} \\ \cline{2-3}
+ \phi_{l}^{j-1}(y) & & \\ \cline{2-3}
+ \psi_{l}^{j-1}(y) & & \\ \cline{2-3}
+\end{array}
+$
+\end{tabular}
+\end{adjustbox}
+\end{frame}
+
+\begin{frame}{2D Nicht-Standard-Haar-Wavelet-Transformation II}
+\begin{adjustbox}{max width=\textwidth, center}
+\begin{tabular}{c c c}
+\settowidth\mylen{$\frac{a+b+c+d}{2}$}
+$
+\begin{array}{C{\mylen}|C{\mylen}|C{\mylen}|}
+ \multicolumn{1}{c}{}& \multicolumn{1}{c}{\phi_{2k}^{j}(x)} & \multicolumn{1}{c}{\phi_{2k+1}^{j}(x)} \\ \cline{2-3}
+ \phi_{2l}^{j}(y) & a & b \\ \cline{2-3}
+ \phi_{2l+1}^{j}(y) & c & d \\ \cline{2-3}
+\end{array}
+$
+&
+$
+\begin{array}{c}
+\\
+\overset{\mbox{\footnotesize 1D}}{\longrightarrow} \\
+\overset{\mbox{\footnotesize Schritt}}{\longrightarrow}
+\end{array}
+$
+&
+\settowidth\mylen{$\frac{a+b+c+d}{2}$}
+$
+\begin{array}{C{\mylen}|C{\mylen}|C{\mylen}|}
+ \multicolumn{1}{c}{}& \multicolumn{1}{c}{\phi_{k}^{j-1}(x)} & \multicolumn{1}{c}{\psi_{k}^{j-1}(x)} \\ \cline{2-3}
+ \phi_{2l}^{j}(y) & \frac{a+b}{\sqrt{2}} & \frac{a-b}{\sqrt{2}} \\ \cline{2-3}
+ \phi_{2l+1}^{j}(y) & \frac{c+d}{\sqrt{2}} & \frac{c-d}{\sqrt{2}} \\ \cline{2-3}
+\end{array}
+$
+\\[1.2cm]
+&
+&
+\settowidth\mylen{$\frac{a+b+c+d}{2}$}
+$
+\begin{array}{C{\mylen} C{\mylen} C{\mylen}}
+ & \big\downarrow \mbox{\footnotesize 1D} & \mbox{\footnotesize Schritt} \big\downarrow \\
+\end{array}
+$
+\\[0.45cm]
+&
+&
+\settowidth\mylen{$\frac{a+b+c+d}{2}$}
+$
+\begin{array}{C{\mylen}|C{\mylen}|C{\mylen}|}
+ \multicolumn{1}{c}{}& \multicolumn{1}{c}{\phi_{k}^{j-1}(x)} & \multicolumn{1}{c}{\psi_{k}^{j-1}(x)} \\ \cline{2-3}
+ \phi_{l}^{j-1}(y) & \frac{a+b+c+d}{2} & \frac{a-b+c-d}{2} \\ \cline{2-3}
+ \psi_{l}^{j-1}(y) & \frac{a+b-c+d}{2} & \frac{a-b-c+d}{2} \\ \cline{2-3}
+\end{array}
+$
+\end{tabular}
+\end{adjustbox}
+\end{frame}
+
+\begin{frame}{2D Nicht-Standard-Haar-Wavelet-Transformation III}
+\begin{adjustbox}{max totalheight=0.9\textheight ,center}
+\begin{tabular}{c}
+\settowidth\mylen{$\phi_{2k+1}^{j}(x)$}
+$
+\begin{array}{c|c c c|C{\mylen}|C{\mylen}|c}
+ \multicolumn{1}{c}{}& \multicolumn{1}{c}{\phi_{0}^{j}(x)} & \multicolumn{1}{c}{\phi_{1}^{j}(x)} & \multicolumn{1}{c}{...} & \multicolumn{1}{c}{\phi_{2k}^{j}(x)} & \multicolumn{1}{c}{\phi_{2k+1}^{j}(x)} & ... \\ \cline{2-7}
+ \phi_{0}^{j}(y) & & & & & & \\
+ \phi_{1}^{j}(y) & & & & & & \\
+ \vdots & & & & & & \\ \cline{2-7}
+ \phi_{2l}^{j}(y) & & & & a & b & \\ \cline{2-7}
+ \phi_{2l+1}^{j}(y) & & & & c & d & \\ \cline{2-7}
+ \vdots & & & & & & \\
+\end{array}
+$
+\\[2.0cm]
+$\mbox{1D Zeilen} \quad \big\downarrow \quad \mbox{1D Spalten}$
+\\[0.25cm]
+\settowidth\mylen{$\phi_{2k+1}^{j}(x)$}
+$
+\begin{array}{c|c c|c|c c:c c|c|c}
+ \multicolumn{1}{c}{}& \multicolumn{1}{c}{\phi_{0}^{j-1}(x)} & \multicolumn{1}{c}{...} & \multicolumn{1}{c}{\phi_{k}^{j-1}(x)} & \multicolumn{1}{c}{...} & \multicolumn{1}{c}{\phi_{\frac{n}{2}-1}^{j-1}(x)} & \multicolumn{1}{c}{\psi_{0}^{j-1}(x)} & \multicolumn{1}{c}{...} & \multicolumn{1}{c}{\psi_{k}^{j-1}(x)} & ... \\ \cline{2-10}
+ \phi_{0}^{j-1}(y) & & & & & & & & & \\
+ \vdots & & & & & & & & & \\ \cline{2-10}
+ \phi_{l}^{j-1}(y) & & & \frac{a+b+c+d}{2} & & & & & \frac{a-b+c-d}{2} & \\ \cline{2-10}
+ \vdots & & & & & & & & & \\ 
+ \phi_{\frac{n}{2}-1}^{j-1}(y) & & & & & & & & & \\ \cdashline{2-10}
+ \psi_{0}^{j-1}(y) & & & & & & & & & \\ 
+ \vdots & & & & & & & & & \\ \cline{2-10}
+ \psi_{l}^{j-1}(y) & & & \frac{a+b-c+d}{2} & & & & & \frac{a-b-c+d}{2} & \\ \cline{2-10}
+ \vdots & & & & & & & & & \\
+\end{array}
+$
+\end{tabular}
+\end{adjustbox}
+\end{frame}
+
+}
+
 \section{Anwendungen}
 	
 	{\setbeamertemplate{frame footer}{Quelle}
