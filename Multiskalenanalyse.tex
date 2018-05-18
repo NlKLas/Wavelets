@@ -1,3 +1,63 @@
+% !TeX spellcheck = de_DE
 \section{Multiskalenanalyse}
 %
-Das mathematische Äquivalent der Beschreibung eines Objektes mithilfe von Koeffizienten ist ein Vektorraum.
+Das mathematische Äquivalent der Beschreibung eines Objektes mithilfe von Koeffizienten ist ein Vektorraum. Jedes Element des Vektorraums kann dabei bei gegebener (Schauder-)Basis als eine endliche bzw. abzählbar unendliche Folge von Koeffizienten dargestellt werden. Wir wollen uns hier, den später präsentierten Anwendungen entsprechend, auf endlich-dimensionale Vektorräume beschränken.
+
+\subsection{Mathematische Konstruktion}
+Es bezeichne $\Phi^N=\{\phi^N_1, ..., \phi^N_{\dim V_N}\}$ die zu den gespeicherten Koeffizienten gehörige Basis und $V_N:=\mathrm{span}(\Phi^N)$ den zugehörigen Vektorraum.\\
+Für die Multiskalenanalyse wird nun ein Set von geschachtelten Vektorräumen\begin{equation*}
+V_0\subset V_1\subset V_2\subset ...\subset V_{N-1}\subset V_N
+\end{equation*}mit zugehörigen Basen\begin{equation*}
+\Phi^i=\{\phi^i_1, ..., \phi^i_{\dim V_i}\}
+\end{equation*}benötigt. Die Wahl eines Skalarproduktes über $V_N$ fixiert dann die orthogonalen Komplemente der $V_i$:\begin{equation*}
+W_i:=V_i^\perp \mathrm{\ \ in\ \ } V_{i+1}\qquad\Leftrightarrow\qquad W_i\oplus V_i=V_{i+1}
+\end{equation*}Die induzierte Norm übernimmt dabei die Rolle eines Fehlermaßes, dies sollte bei der Wahl des Skalarproduktes bedacht werden.
+Nun müssen noch die Basisvektoren der orthogonalen Komplemente gewählt werden:\begin{equation*}
+\Psi^i=\{\psi^i_1, ..., \psi^i_{\dim W_i}\}
+\end{equation*}Die $\phi^i_j$s werden als Skalenfunktionen, die $\psi^i_j$s als Wavelets (von englisch wave: Welle und französisch -lette: klein) bezeichnet.\\
+Standardmäßig werden Funktionen des $L^2([0,1])$ unter dem Standardskalarprodukt\begin{equation*}
+\left\langle f\mid g\right\rangle :=\int_{0}^{1}f(x)\cdot g(x)\mathrm{d}x
+\end{equation*}betrachtet. Um eine gleichmäßige Informationsdichte zu ermöglichen werden die Skalenfunktionen dann ihrem Namen entsprechend als skalierte und verschobene Versionen der $V_0$-Basisvektoren gewählt:\begin{equation*}
+\phi^i_{k\cdot j}(x)=\begin{cases}
+\phi^0_j(m^i x-(k-1)),&m^i x-(k-1)\in[0,1]\\
+0, &\mathrm{sonst}
+\end{cases};\qquad 1\leq k\leq m^i, \ \ m\in \mathbb{N}.
+\end{equation*}Der Skalierungsfaktor $m$ legt dabei die Vektorraumdimensionen fest:\begin{equation*}
+\dim V_i=m^i\cdot \dim V_0;\qquad\dim W_i=(m-1)m^i\cdot \dim V_0
+\end{equation*}Auch die Wavelets können dann als skalierte und verschobene Versionen der $\{\Psi^0\}$ gewählt werden. Es ist meist erstrebenswert, dass sie eine Orthonormalbasis der $W_i$ bilden, einen kleinen Träger besitzen und bis zu einem gewissen Maße stetig differenzierbar sind. Wavelets welche alle drei Eigenschaften erfüllen sind als Daubechies-Wavelets bekannt.
+
+\subsection{Die Filter Bank}
+Die Konstruktion der orthogonalen Komplemente $W_i$ erlaubt es nun die Elemente jedes Vektorraums $V_i=V_{i-1}\oplus W_{i-1}$ in der Basis $\{\phi^{i-1}_1, ..., \phi^{i-1}_{\dim V_{i-1}}, \psi^{i-1}_1, ..., \psi^{i-1}_{\dim W_{i-1}}\}$ darzustellen. Die Basistransformationsmatrix $T^i_{sf\rightarrow wl}$ ist mit der Wahl der Basisvektoren eindeutig festgelegt durch\begin{equation*}
+\left[ \Phi^i\right] =\left[ \Phi^{i-1}\mid \Psi^{i-1}\right] \cdot T^i_{sf\rightarrow wl}=:\left[ \Phi^{i-1}\mid \Psi^{i-1}\right]\left[ \frac{\ A^i\ }{\ B^i\ }\right].
+\end{equation*}Die Matrizen $A^i$ und $B^i$ sind einzeln betrachtet Projektionen, welche $V_i$ auf die Unterräume $V_{i-1}$ bzw. $W_{i-1}$ abbilden. Sie werden als Analyse-Filter bezeichnet. Die Rücktransformation ist gegeben durch\begin{equation*}
+T^i_{wl\rightarrow sf}=\left[ \frac{\ A^i\ }{\ B^i\ }\right]^{-1}=:\left[ P^i\mid Q^i\right].
+\end{equation*}Die Matrizen $P^i$ und $Q^i$ werden dabei als Synthese Filter bezeichnet.
+
+
+
+
+
+
+
+
+
+
+\newpage
+
+$ $
+Ziel ist es Elemente des $V_N$ in der Basis des $V_0\oplus W_0 \oplus...\oplus W_{N-1}$
+
+
+
+
+
+
+
+
+
+
+\newpage
+
+Analyse, Synthese Filter -- Basistransformation(projektionen auf Unterraum)
+gleichungen orthogonalität o semio nono
+Filter bank
