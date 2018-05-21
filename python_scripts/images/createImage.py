@@ -19,4 +19,4 @@ plt.imshow(lena, cmap='gray')
 plt.show()
 
 j = PIL.Image.fromarray(lena)
-j.save("worstCase.jpg")
+j.save("worstCase.png")

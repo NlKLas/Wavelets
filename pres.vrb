@@ -1,0 +1,31 @@
+\frametitle{1D Haar-Wavelet-Transformation}
+\begin{adjustbox}{width=0.4\textwidth, center}
+$
+\begin{array}{*{8}{C{0.9cm}}}
+\multicolumn{8}{c}{\vdots} \\
+\hline \multicolumn{8}{|c|}{C^3} \\ \hline
+\multicolumn{4}{r}{\swarrow} & \multicolumn{4}{l}{\searrow}\\
+\hline \multicolumn{4}{|c|}{C^2} & \multicolumn{4}{|c|}{D^2}\\ \hline
+\multicolumn{2}{r}{\swarrow} & \multicolumn{2}{l}{\searrow}\\
+\cline{1-4} \multicolumn{2}{|c|}{C^1} & \multicolumn{2}{|c|}{D^1}\\ \cline{1-4}
+\multicolumn{1}{r}{\swarrow} & \multicolumn{1}{l}{\searrow}\\
+\cline{1-2} \multicolumn{1}{|c|}{C^0} & \multicolumn{1}{|c|}{D^0}\\ \cline{1-2}
+\\ \hline
+ & & & & & & & \\
+\hline \multicolumn{1}{|c|}{C^0} & \multicolumn{1}{|c|}{D^0} & \multicolumn{2}{|c|}{D^1} & \multicolumn{4}{|c|}{D^2}\\ \hline
+\end{array}
+$
+\end{adjustbox}
+\center
+\begin{adjustbox}{minipage=0.95\linewidth, fbox}
+\begin{verbatim}
+def analysis(C):
+    C' = copy(C)
+    h = C.size
+    while h > 1:
+        C'[0:h] = analysisStep(C'[0:h])
+        h = h // 2
+    return C'
+\end{verbatim}
+\end{adjustbox}
+

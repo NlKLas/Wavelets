@@ -1,6 +1,52 @@
 \section{Algorithmen} {
 
-\begin{frame}{1D Haar-Wavelet-Transformation I}
+\begin{frame}{Algorithmen}
+\begin{center}
+\begin{tabular}{ccc}
+\begin{tabular}{c}Haar-Wavelet- \\ Transformation\end{tabular} & 
+$\longleftrightarrow$ & 
+\begin{tabular}{c}Basiswechsel zwischen \\ Orthonormalbasen\end{tabular} \\
+\end{tabular}
+\\[1.0cm]
+\end{center}
+
+Zwei Ansätze:
+\begin{itemize}
+\item einzelne Koeffizienten: Projektion durch Skalarprodukt
+\item gesamte Transformation: Filterbank-Algorithmus
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{Erinnerung: Filterbank}
+
+Die Filterbank-Transformation:\\[-0.1cm]
+\[
+\begin{array}{c c c c c c c c c c c}
+C^{k} & \rightarrow & C^{k-1} & \rightarrow & C^{k-2} & \rightarrow & \dots & \rightarrow & C^{1} & \rightarrow & \mathbf{C^{0}} \\
+ & \searrow & & \searrow & & \searrow & & \searrow & & \searrow & \\
+ & & \mathbf{D^{k-1}} & & \mathbf{D^{k-2}} & & \dots & & \mathbf{D^{1}} & & \mathbf{D^{0}} \\
+\end{array}
+\]
+\\[0.5cm]
+mit
+\\[0.1cm]
+\center $C^{j} \quad = \quad P^{j} \enspace C^{j-1} \quad + \quad Q^{j} \enspace D^{j-1}$
+\\
+bzw.
+\\
+$C^{j-1} \quad = \quad A^{j} \enspace C^{j} \qquad, \qquad D^{j-1} \quad = \quad B^{j} \enspace C^{j}$
+\\[0.25cm]
+
+\pause[2] \textbf{Mehrere Matrixmultiplikationen -- Teuer!?}
+\end{frame}
+
+% Hier wird darauf hingewiesen, dass P und Q im Fall der Haar-Wavelet-Trafo fast nur Nullen enthalten, die Filterbank-Schritte also schneller direkt Implementiert werden können.
+
+\begin{frame}{1D Haar-Wavelet-Transformation}
+Einzelschritt im Speicher:
+\\[1.0cm]
 \begin{adjustbox}{max width=\textwidth ,center}
 \begin{tabular}{c}
 \settowidth\mylen{$\phi_{2i+1}^{j}$}
@@ -65,8 +111,12 @@ $
 \end{adjustbox}
 \end{frame}
 
-\begin{frame}{1D Haar-Wavelet-Transformation II}
+% An dieser Stelle wir der Analyse-Schritt-Algorithmus an der Tafel aufgeschrieben.
 
+\begin{frame}{1D Haar-Wavelet-Transformation}
+\center
+Gesamt-Transformation im Speicher:
+\\[-0.75cm]
 \[
 \begin{array}{*{8}{C{0.9cm}}}
 \multicolumn{8}{c}{\vdots} \\
@@ -85,220 +135,507 @@ $
 
 \end{frame}
 
-\begin{frame}{2D Standard-Haar-Wavelet-Transformation I}
-\begin{adjustbox}{max width=\textwidth ,center}
-\begin{tabular}{c c c}
-
+\begin{frame}[fragile]{1D Haar-Wavelet-Transformation}
+\begin{adjustbox}{width=0.4\textwidth, center}
 $
-\begin{array}{c|c|c|c|c}
- \multicolumn{1}{c}{}& \multicolumn{1}{c}{\phi_{0}^{j}(x)} & \multicolumn{1}{c}{\phi_{1}^{j}(x)} & \multicolumn{1}{c}{\phi_{2}^{j}(x)} & ... \\ \cline{2-5}
- \phi_{0}^{j}(y) & & & & \\ \cline{2-5}
- \phi_{1}^{j}(y) & & & & \\ \cline{2-5}
- \phi_{2}^{j}(y) & & & & \\ \cline{2-5}
- \vdots & & & & 
-\end{array}
-$
-&
-$\overset{?}{\rightarrow}$
-&
-$
-\begin{array}{c|c|c|c|c}
- \multicolumn{1}{c}{}& \multicolumn{1}{c}{\phi_{0}^{0}(x)} & \multicolumn{1}{c}{\psi_{0}^{0}(x)} & \multicolumn{1}{c}{\psi_{0}^{1}(x)} & ... \\ \cline{2-5}
- \phi_{0}^{0}(y) & & & & \\ \cline{2-5}
- \psi_{0}^{0}(y) & & & & \\ \cline{2-5}
- \psi_{0}^{1}(y) & & & & \\ \cline{2-5}
- \vdots & & & & 
-\end{array}
-$ 
-\\
-
-\end{tabular}
-\end{adjustbox}
-\end{frame}
-
-\begin{frame}{2D Standard-Haar-Wavelet-Transformation II}
-\begin{adjustbox}{max width=\textwidth ,center}
-\begin{tabular}{c c c}
-$
-\begin{array}{c|c|c|c|c}
- \multicolumn{1}{c}{}& \multicolumn{1}{c}{\phi_{0}^{j}(x)} & \multicolumn{1}{c}{\phi_{1}^{j}(x)} & \multicolumn{1}{c}{\phi_{2}^{j}(x)} & ... \\ \cline{2-5}
- \phi_{l}^{j}(y) & & & & \\ \cline{2-5}
-\end{array}
-$
-&
-$\begin{array}{c}
-\\ \overset{1D}{\longleftrightarrow} \\
-\end{array}$
-&
-$
-\begin{array}{c|c|c|c|c}
- \multicolumn{1}{c}{}& \multicolumn{1}{c}{\phi_{0}^{0}(x)} & \multicolumn{1}{c}{\psi_{0}^{0}(x)} & \multicolumn{1}{c}{\psi_{0}^{1}(x)} & ... \\ \cline{2-5}
- \phi_{l}^{j}(y) & & & & \\ \cline{2-5}
-\end{array}
-$ 
-\\
+\begin{array}{*{8}{C{0.9cm}}}
+\multicolumn{8}{c}{\vdots} \\
+\hline \multicolumn{8}{|c|}{C^3} \\ \hline
+\multicolumn{4}{r}{\swarrow} & \multicolumn{4}{l}{\searrow}\\
+\hline \multicolumn{4}{|c|}{C^2} & \multicolumn{4}{|c|}{D^2}\\ \hline
+\multicolumn{2}{r}{\swarrow} & \multicolumn{2}{l}{\searrow}\\
+\cline{1-4} \multicolumn{2}{|c|}{C^1} & \multicolumn{2}{|c|}{D^1}\\ \cline{1-4}
+\multicolumn{1}{r}{\swarrow} & \multicolumn{1}{l}{\searrow}\\
+\cline{1-2} \multicolumn{1}{|c|}{C^0} & \multicolumn{1}{|c|}{D^0}\\ \cline{1-2}
 \\ \hline
+ & & & & & & & \\
+\hline \multicolumn{1}{|c|}{C^0} & \multicolumn{1}{|c|}{D^0} & \multicolumn{2}{|c|}{D^1} & \multicolumn{4}{|c|}{D^2}\\ \hline
+\end{array}
+$
+\end{adjustbox}
+\center
+\begin{adjustbox}{minipage=0.95\linewidth, fbox}
+\begin{verbatim}
+def analysis(C):
+    C' = copy(C)
+    h = C.size
+    while h > 1:
+        C'[0:h] = analysisStep(C'[0:h])
+        h = h // 2
+    return C'
+\end{verbatim}
+\end{adjustbox}
+
+\end{frame}
+
+% An dieser Stelle mache ich an der Tafel die Laufzeit-Analyse. Dann kommt die Überleitung zu 2D-Signalen
+
+\begin{frame}{2D Haar-Wavelet-Transformationen}
+\textbf{Ergebnis:} \\
+Die Algorithmen aus dem 1D-Fall können zur effizienten Implementierung der Transformation im Standard- und im Nicht-Standard-Fall wiederverwendet werden.
+\\[1.0cm]
+\textbf{Laufzeitkomplexität} für $n \times n$-Input:
+\begin{itemize}
+\item Standard-Basis: \\
+$4n^2 - 4n$
+\item Nicht-Standard-Basis: \\
+$\frac{8}{3}(n^2-1)$
+\end{itemize}
+
+\end{frame}
+
+% Das dauert deutlich zu lange....
+%\begin{frame}{2D Standard-Haar-Wavelet-Transformation}
+%\begin{center}
+%\textbf{2D Standard-Basis}
+%\end{center}
+%~\\[-1.0cm]
+%Basisfunktionen sind Tensorprodukte der 1D Basisfunktionen.\\
+%\[\mathbf{v} = \sum_{k,l=0}^{n-1} a_{k,l}\phi_k^j(x)\phi_l^j(y)\]
+%\\[-0.1cm]
+%
+%Ziel:\\[0.5cm]
+%
+%\begin{adjustbox}{max width=\textwidth ,center}
+%\begin{tabular}{c c c}
+%
+%$
+%\begin{array}{c|c|c|c|c}
+% \multicolumn{1}{c}{}& \multicolumn{1}{c}{\phi_{0}^{j}(x)} & \multicolumn{1}{c}{\phi_{1}^{j}(x)} & \multicolumn{1}{c}{\phi_{2}^{j}(x)} & ... \\ \cline{2-5}
+% \phi_{0}^{j}(y) & a_{0,0} & a_{1,0} & a_{2,0} & \\ \cline{2-5}
+% \phi_{1}^{j}(y) & a_{0,1} & a_{1,1} & a_{2,1} & \\ \cline{2-5}
+% \phi_{2}^{j}(y) & a_{0,2} & a_{1,2} & a_{2,2} & \\ \cline{2-5}
+% \vdots & & & & 
+%\end{array}
+%$
+%&
+%$\overset{?}{\rightarrow}$
+%&
+%$
+%\begin{array}{c|c|c|c|c}
+% \multicolumn{1}{c}{}& \multicolumn{1}{c}{\phi_{0}^{0}(x)} & \multicolumn{1}{c}{\psi_{0}^{0}(x)} & \multicolumn{1}{c}{\psi_{0}^{1}(x)} & ... \\ \cline{2-5}
+% \phi_{0}^{0}(y) & b_{0,0} & b_{1,0} & b_{2,0} & \\ \cline{2-5}
+% \psi_{0}^{0}(y) & b_{0,1} & b_{1,1} & b_{2,1} & \\ \cline{2-5}
+% \psi_{0}^{1}(y) & b_{0,2} & b_{1,2} & b_{2,2} & \\ \cline{2-5}
+% \vdots & & & & 
+%\end{array}
+%$ 
+%\\
+%
+%\end{tabular}
+%\end{adjustbox}
+%\end{frame}
+%
+%% An dieser Stelle führe an der Tafel den Ausklammer-Trick vor...
+%
+%\begin{frame}{2D Standard-Haar-Wavelet-Transformation}
+%Anwenden der 1D Transformation auf Zeilen und Spalten:
+%\\[0.75cm]
+%\begin{adjustbox}{max width=\textwidth ,center}
+%\begin{tabular}{c c c}
+%$
+%\begin{array}{c|c|c|c|c}
+% \multicolumn{1}{c}{}& \multicolumn{1}{c}{\phi_{0}^{j}(x)} & \multicolumn{1}{c}{\phi_{1}^{j}(x)} & \multicolumn{1}{c}{\phi_{2}^{j}(x)} & ... \\ \cline{2-5}
+% \phi_{l}^{j}(y)  & a_{0,l} & a_{1,l} & a_{2,l} & \\ \cline{2-5}
+%\end{array}
+%$
+%&
+%$\begin{array}{c}
+%\\ \overset{1D}{\longleftrightarrow} \\
+%\end{array}$
+%&
+%$
+%\begin{array}{c|c|c|c|c}
+% \multicolumn{1}{c}{}& \multicolumn{1}{c}{\phi_{0}^{0}(x)} & \multicolumn{1}{c}{\psi_{0}^{0}(x)} & \multicolumn{1}{c}{\psi_{0}^{1}(x)} & ... \\ \cline{2-5}
+% \phi_{l}^{j}(y) & a_{0,l}' & a_{1,l}' & a_{2,l}' & \\ \cline{2-5}
+%\end{array}
+%$ 
+%\\
+%\\ \hline
+%\\
+%$
+%\begin{array}{c|c|}
+% \multicolumn{1}{c}{}& \multicolumn{1}{c}{\psi_{k}^{i}(x)} \\ \cline{2-2}
+% \phi_{0}^{j}(y) & a_{k,0}' \\ \cline{2-2}
+% \phi_{1}^{j}(y) & a_{k,1}' \\ \cline{2-2}
+% \phi_{2}^{j}(y) & a_{k,2}' \\ \cline{2-2}
+% \vdots & 
+%\end{array}
+%$
+%&
+%$\overset{1D}{\longleftrightarrow}$
+%&
+%$
+%\begin{array}{c|c|}
+% \multicolumn{1}{c}{}& \multicolumn{1}{c}{\psi_{k}^{i}(x)} \\ \cline{2-2}
+% \phi_{0}^{0}(y) & b_{k,0} \\ \cline{2-2}
+% \psi_{0}^{1}(y) & b_{k,1} \\ \cline{2-2}
+% \psi_{0}^{1}(y) & b_{k,2} \\ \cline{2-2}
+% \vdots & 
+%\end{array}
+%$ 
+%\end{tabular}
+%\end{adjustbox}
+%\end{frame}
+%
+%\begin{frame}{2D Standard-Haar-Wavelet-Transformation}
+%2D Standard-Transformation durch 1D Transformationen:
+%\\[0.75cm]
+%\begin{adjustbox}{max width=\textwidth ,center}
+%\begin{tabular}{c c c}
+%
+%$
+%\begin{array}{c|c|c|c|c}
+% \multicolumn{1}{c}{}& \multicolumn{1}{c}{\phi_{0}^{j}(x)} & \multicolumn{1}{c}{\phi_{1}^{j}(x)} & \multicolumn{1}{c}{\phi_{2}^{j}(x)} & ... \\ \cline{2-5}
+% \phi_{0}^{j}(y) & a_{0,0} & a_{1,0} & a_{2,0} & \\ \cline{2-5}
+% \phi_{1}^{j}(y) & a_{0,1} & a_{1,1} & a_{2,1} & \\ \cline{2-5}
+% \phi_{2}^{j}(y) & a_{0,2} & a_{1,2} & a_{2,2} & \\ \cline{2-5}
+% \vdots & & & & 
+%\end{array}
+%$
+%&
+%$
+%\begin{array}{c}
+%\\
+%\overset{\mbox{\footnotesize 1D}}{\longrightarrow} \\
+%\overset{\mbox{\footnotesize 1D}}{\longrightarrow} \\
+%\overset{\mbox{\footnotesize 1D}}{\longrightarrow} \\
+%\vdots \\
+%\end{array}
+%$
+%&
+%$
+%\begin{array}{c|c|c|c|c}
+% \multicolumn{1}{c}{}& \multicolumn{1}{c}{\phi_{0}^{0}(x)} & \multicolumn{1}{c}{\psi_{0}^{0}(x)} & \multicolumn{1}{c}{\psi_{0}^{1}(x)} & ... \\ \cline{2-5}
+% \phi_{0}^{j}(y) & a_{0,0}' & a_{1,0}' & a_{2,0}' & \\ \cline{2-5}
+% \phi_{1}^{j}(y) & a_{0,1}' & a_{1,1}' & a_{2,1}' & \\ \cline{2-5}
+% \phi_{2}^{j}(y) & a_{0,2}' & a_{1,2}' & a_{2,2}' & \\ \cline{2-5}
+% \vdots & & & & 
+%\end{array}
+%$ 
+%\\[1.2cm]
+%&
+%&
+%\settowidth\mylen{$\phi_{0}^{0}(x)$}
+%$
+%\begin{array}{C{\mylen} C{\mylen} C{\mylen} C{\mylen} C{\mylen}}
+% & \mbox{\footnotesize 1D} \big\downarrow & \mbox{\footnotesize 1D} \big\downarrow & \mbox{\footnotesize 1D} \big\downarrow & ... \\
+%\end{array}
+%$
+%\\[0.45cm]
+%&
+%&
+%$
+%\begin{array}{c|c|c|c|c}
+% \multicolumn{1}{c}{}& \multicolumn{1}{c}{\phi_{0}^{0}(x)} & \multicolumn{1}{c}{\psi_{0}^{0}(x)} & \multicolumn{1}{c}{\psi_{0}^{1}(x)} & ... \\ \cline{2-5}
+% \phi_{0}^{0}(y) & b_{0,0} & b_{1,0} & b_{2,0} & \\ \cline{2-5}
+% \psi_{0}^{0}(y) & b_{0,1} & b_{1,1} & b_{2,1} & \\ \cline{2-5}
+% \psi_{0}^{1}(y) & b_{0,2} & b_{1,2} & b_{2,2} & \\ \cline{2-5}
+% \vdots & & & & 
+%\end{array}
+%$ 
+%\\
+%
+%\end{tabular}
+%\end{adjustbox}
+%\end{frame}
+%
+%% An dieser Stelle wird an der Tafel kurz die Laufzeitkomplexität der 2D Standard-Trafo. berechnet.
+%
+%\begin{frame}{2D Nicht-Standard-Haar-Wavelet-Transformation}
+%\begin{center}
+%\textbf{2D Nicht-Standard-Basis}
+%\end{center}
+%~\\[-1.0cm]
+%Skalierungs- und Wavelet-Funktionen sind Skalierungen von:
+%\\
+%\[
+%\begin{array}{cc}
+%\phi\phi_{0,0}^0(x,y) = \phi_0^0(x)\phi_0^0(y) & \psi\phi_{0,0}^0(x,y) = \psi_0^0(x)\phi_0^0(y) \\
+%\phi\psi_{0,0}^0(x,y) = \phi_0^0(x)\psi_0^0(y) & \psi\psi_{0,0}^0(x,y) = \psi_0^0(x)\psi_0^0(y) \\
+%\end{array}
+%\]
+%\\[0.5cm]
+%
+%Ziel eines Einzelschrittes:\\[0.5cm]
+%
+%\begin{adjustbox}{max width=\textwidth ,center}
+%\begin{tabular}{c c c}
+%
+%$
+%\begin{array}{c|c|c|c|c}
+% \multicolumn{1}{c}{}& \multicolumn{1}{c}{\phi_{0}^{j}(x)} & \multicolumn{1}{c}{\phi_{1}^{j}(x)} & \multicolumn{1}{c}{\phi_{2}^{j}(x)} & ... \\ \cline{2-5}
+% \phi_{0}^{j}(y) & a_{0,0} & a_{1,0} & a_{2,0} & \\ \cline{2-5}
+% \phi_{1}^{j}(y) & a_{0,1} & a_{1,1} & a_{2,1} & \\ \cline{2-5}
+% \phi_{2}^{j}(y) & a_{0,2} & a_{1,2} & a_{2,2} & \\ \cline{2-5}
+% \vdots & & & & 
+%\end{array}
+%$
+%&
+%$\overset{?}{\rightarrow}$
+%&
+%$
+%\begin{array}{c|c c|c c}
+% \multicolumn{1}{c}{}& \multicolumn{1}{c}{\phi_{0}^{j-1}(x)} & \multicolumn{1}{c}{...} & \multicolumn{1}{c}{\psi_{0}^{j-1}(x)} & ... \\ \cline{2-5}
+% \phi_{0}^{j-1}(y) & b_{0,0} & ... & b_{\frac{n}{2},0} & ...\\
+% \vdots & \vdots & \ddots & \vdots & \ddots \\ \cline{2-5}
+% \psi_{0}^{j-1}(y) & b_{0,\frac{n}{2}} & ... & b_{\frac{n}{2},\frac{n}{2}} & ...\\
+% \vdots & \vdots & \ddots & \vdots & \ddots
+%\end{array}
+%$ 
+%\\
+%
+%\end{tabular}
+%\end{adjustbox}
+%\end{frame}
+%
+%\begin{frame}{2D Nicht-Standard-Haar-Wavelet-Transformation}
+%Wende 1D Einzelschritte auf Zeilen und Spalten an:
+%\\[0.75cm]
+%\begin{adjustbox}{max width=\textwidth ,center}
+%\begin{tabular}{c c c}
+%
+%$
+%\begin{array}{c|c|c|c|c}
+% \multicolumn{1}{c}{}& \multicolumn{1}{c}{\phi_{0}^{j}(x)} & \multicolumn{1}{c}{\phi_{1}^{j}(x)} & \multicolumn{1}{c}{\phi_{2}^{j}(x)} & ... \\ \cline{2-5}
+% \phi_{0}^{j}(y) & a_{0,0} & a_{1,0} & a_{2,0} & \\ \cline{2-5}
+% \phi_{1}^{j}(y) & a_{0,1} & a_{1,1} & a_{2,1} & \\ \cline{2-5}
+% \phi_{2}^{j}(y) & a_{0,2} & a_{1,2} & a_{2,2} & \\ \cline{2-5}
+% \vdots & & & & 
+%\end{array}
+%$
+%&
+%$
+%\begin{array}{c}
+%\\
+%\overset{\mbox{\footnotesize 1D}}{\longrightarrow} \\
+%\overset{\mbox{\footnotesize 1D}}{\longrightarrow} \\
+%\overset{\mbox{\footnotesize 1D}}{\longrightarrow} \\
+%\vdots \\
+%\end{array}
+%$
+%&
+%$
+%\begin{array}{c|c c|c c}
+% \multicolumn{1}{c}{}& \multicolumn{1}{c}{\phi_{0}^{j-1}(x)} & \multicolumn{1}{c}{...} & \multicolumn{1}{c}{\psi_{0}^{j-1}(x)} & ... \\ \cline{2-5}
+% \phi_{0}^{j}(y) & a_{0,0}' & ... & a_{\frac{n}{2},0}' & ...\\ \cline{2-5}
+% \phi_{1}^{j}(y) & a_{0,1}' & ... & a_{\frac{n}{2},1}' & ...\\ \cline{2-5}
+% \phi_{2}^{j}(y) & a_{0,2}' & ... & a_{\frac{n}{2},2}' & ...\\ \cline{2-5}
+% \vdots & & & & 
+%\end{array}
+%$
+%\\[1.2cm]
+%&
+%&
+%\settowidth\mylen{$\phi_{0}^{0}(x)$}
+%$
+%\begin{array}{C{\mylen} C{\mylen} C{\mylen} C{\mylen} C{\mylen}}
+% & \mbox{\footnotesize 1D} \big\downarrow & ... & \mbox{\footnotesize 1D} \big\downarrow & ... \\
+%\end{array}
+%$
+%\\[0.45cm]
+%&
+%&
+%$
+%\begin{array}{c|c c|c c}
+% \multicolumn{1}{c}{}& \multicolumn{1}{c}{\phi_{0}^{j-1}(x)} & \multicolumn{1}{c}{...} & \multicolumn{1}{c}{\psi_{0}^{j-1}(x)} & ... \\ \cline{2-5}
+% \phi_{0}^{j-1}(y) & b_{0,0} & ... & b_{\frac{n}{2},0} & ...\\
+% \vdots & \vdots & \ddots & \vdots & \ddots \\ \cline{2-5}
+% \psi_{0}^{j-1}(y) & b_{0,\frac{n}{2}} & ... & b_{\frac{n}{2},\frac{n}{2}} & ...\\
+% \vdots & \vdots & \ddots & \vdots & \ddots
+%\end{array}
+%$ 
+%\\
+%
+%\end{tabular}
+%\end{adjustbox}
+%\end{frame}
+%
+%\begin{frame}[fragile]{2D Nicht-Standard-Haar-Wavelet-Transformation}
+%\begin{adjustbox}{width=0.5\textwidth, center}
+%\begin{tabular}{c c c}
+%
+%$
+%\begin{array}{c|c|c|c|c}
+% \multicolumn{1}{c}{}& \multicolumn{1}{c}{\phi_{0}^{j}(x)} & \multicolumn{1}{c}{\phi_{1}^{j}(x)} & \multicolumn{1}{c}{\phi_{2}^{j}(x)} & ... \\ \cline{2-5}
+% \phi_{0}^{j}(y) & a_{0,0} & a_{1,0} & a_{2,0} & \\ \cline{2-5}
+% \phi_{1}^{j}(y) & a_{0,1} & a_{1,1} & a_{2,1} & \\ \cline{2-5}
+% \phi_{2}^{j}(y) & a_{0,2} & a_{1,2} & a_{2,2} & \\ \cline{2-5}
+% \vdots & & & & 
+%\end{array}
+%$
+%&
+%$
+%\begin{array}{c}
+%\\
+%\overset{\mbox{\footnotesize 1D}}{\longrightarrow} \\
+%\overset{\mbox{\footnotesize 1D}}{\longrightarrow} \\
+%\overset{\mbox{\footnotesize 1D}}{\longrightarrow} \\
+%\vdots \\
+%\end{array}
+%$
+%&
+%$
+%\begin{array}{c|c c|c c}
+% \multicolumn{1}{c}{}& \multicolumn{1}{c}{\phi_{0}^{j-1}(x)} & \multicolumn{1}{c}{...} & \multicolumn{1}{c}{\psi_{0}^{j-1}(x)} & ... \\ \cline{2-5}
+% \phi_{0}^{j}(y) & a_{0,0}' & ... & a_{\frac{n}{2},0}' & ...\\ \cline{2-5}
+% \phi_{1}^{j}(y) & a_{0,1}' & ... & a_{\frac{n}{2},1}' & ...\\ \cline{2-5}
+% \phi_{2}^{j}(y) & a_{0,2}' & ... & a_{\frac{n}{2},2}' & ...\\ \cline{2-5}
+% \vdots & & & & 
+%\end{array}
+%$
+%\\[1.2cm]
+%&
+%&
+%\settowidth\mylen{$\phi_{0}^{0}(x)$}
+%$
+%\begin{array}{C{\mylen} C{\mylen} C{\mylen} C{\mylen} C{\mylen}}
+% & \mbox{\footnotesize 1D} \big\downarrow & ... & \mbox{\footnotesize 1D} \big\downarrow & ... \\
+%\end{array}
+%$
+%\\[0.45cm]
+%&
+%&
+%$
+%\begin{array}{c|c c|c c}
+% \multicolumn{1}{c}{}& \multicolumn{1}{c}{\phi_{0}^{j-1}(x)} & \multicolumn{1}{c}{...} & \multicolumn{1}{c}{\psi_{0}^{j-1}(x)} & ... \\ \cline{2-5}
+% \phi_{0}^{j-1}(y) & b_{0,0} & ... & b_{\frac{n}{2},0} & ...\\
+% \vdots & \vdots & \ddots & \vdots & \ddots \\ \cline{2-5}
+% \psi_{0}^{j-1}(y) & b_{0,\frac{n}{2}} & ... & b_{\frac{n}{2},\frac{n}{2}} & ...\\
+% \vdots & \vdots & \ddots & \vdots & \ddots
+%\end{array}
+%$ 
+%\\
+%
+%\end{tabular}
+%\end{adjustbox}
+%\center
+%\begin{adjustbox}{max width=0.95\linewidth, fbox}
+%\begin{adjustbox}{minipage=\linewidth, scale=0.8, center}
+%\begin{verbatim}
+%def nonstandardAnalysis(C):
+%    C' = copy(C)
+%    h = C.size
+%    while h > 1:
+%        for i in range(h):
+%            C'[i,0:h] = analysisStep(C'[i,0:h])
+%        for j in range(h):
+%            C'[0:h,j] = analysisStep(C'[0:h,j])
+%        h = h // 2
+%    return C'
+%\end{verbatim}
+%\end{adjustbox}
+%\end{adjustbox}
+%
+%\end{frame}
+%
+%% An dieser Stelle führe noch die Laufzeitkomplexitätsanalyse für die Nicht-Standard-Transformation durch und Leite über Richtung B-Splines.
+
+}
+
+\section{Splinekurven} {
+
+\begin{frame}{Grundlagen: Splinefunktionen}
+\textbf{Definition:} Splinefunktion \\
+Sei $\mathbf{t}=(t_0,...,t_n)$ eine monoton steigende Sequenz reeller Zahlen und $d \in \N_0$. Eine Funktion $S:[t_0,t_n] \rightarrow \R$ in $C^{d-1}(\R)$ heißt Splinefunktion vom Grad $d$ zum Knotenvektor $\mathbf{t}$, wenn $S|_{[t_{k},t_{k+1}]}$, $k=0,...,n-1$, ein Polynom vom Maximalgrad $d$ ist. 
+\\[1.0cm]
+
+Die Menge aller Splinefunktionen selben Grades $d$ und zum selben Knotenvektor $\mathbf{t}$ bilden einen reellen Vektorraum mit $n+d$ Dimensionen. 
 \\
-$
-\begin{array}{c|c|}
- \multicolumn{1}{c}{}& \multicolumn{1}{c}{\psi_{k}^{i}(x)} \\ \cline{2-2}
- \phi_{0}^{j}(y) & \\ \cline{2-2}
- \phi_{1}^{j}(y) & \\ \cline{2-2}
- \phi_{2}^{j}(y) & \\ \cline{2-2}
- \vdots & 
-\end{array}
-$
-&
-$\overset{1D}{\longleftrightarrow}$
-&
-$
-\begin{array}{c|c|}
- \multicolumn{1}{c}{}& \multicolumn{1}{c}{\psi_{k}^{i}(x)} \\ \cline{2-2}
- \phi_{0}^{0}(y) & \\ \cline{2-2}
- \psi_{0}^{1}(y) & \\ \cline{2-2}
- \psi_{0}^{1}(y) & \\ \cline{2-2}
- \vdots & 
-\end{array}
-$ 
-\end{tabular}
-\end{adjustbox}
 \end{frame}
 
-\begin{frame}{2D Nicht-Standard-Haar-Wavelet-Transformation I}
-\begin{adjustbox}{max width=\textwidth, center}
-\begin{tabular}{c c c}
-\settowidth\mylen{$\phi_{2k+1}^{j}(x)$}
-$
-\begin{array}{C{\mylen}|C{\mylen}|C{\mylen}|}
- \multicolumn{1}{c}{}& \multicolumn{1}{c}{\phi_{2k}^{j}(x)} & \multicolumn{1}{c}{\phi_{2k+1}^{j}(x)} \\ \cline{2-3}
- \phi_{2l}^{j}(y) & & \\ \cline{2-3}
- \phi_{2l+1}^{j}(y) & & \\ \cline{2-3}
-\end{array}
-$
-&
-$\overset{?}{\longrightarrow}$
-&
-\settowidth\mylen{$\phi_{2k+1}^{j}(x)$}
-$
-\begin{array}{C{\mylen}|C{\mylen}|C{\mylen}|}
- \multicolumn{1}{c}{}& \multicolumn{1}{c}{\phi_{k}^{j-1}(x)} & \multicolumn{1}{c}{\psi_{k}^{j-1}(x)} \\ \cline{2-3}
- \phi_{l}^{j-1}(y) & & \\ \cline{2-3}
- \psi_{l}^{j-1}(y) & & \\ \cline{2-3}
-\end{array}
-$
-\end{tabular}
-\end{adjustbox}
-\end{frame}
+\begin{frame}{Grundlagen: B-Spline-Funktionen}
+\textbf{Definition:} B-Spline-Funktionen \\
+Sei $\mathbf{\tau}=(t_{-d},...,t_0,...,t_n,...t_{n+d})$ eine monoton steigende Sequenz reeller Zahlen und $d \in \N_0$. Definiere die B-Spline-Funktionen $(B_{i,d})_{i=1}^{n+d}$ vom Grad $d$ zu den Knoten $\mathbf{\tau}$ durch 
+\[
+B_{i,0}(x) := \begin{cases} 1& \tau_i<x<\tau_{i+1} \\ 0& \text{sonst} \end{cases} \qquad ,
+\]
+\[
+B_{i,k}(x) := \frac{x-\tau_i}{\tau_{i+k}-\tau_i}B_{i,k-1}(x) + \frac{\tau_{i+k+1}-x}{\tau_{i+k+1}-\tau_{i+1}}B_{i+1,k-1}(x)
+.
+\]
+\\[1.0cm]
 
-\begin{frame}{2D Nicht-Standard-Haar-Wavelet-Transformation II}
-\begin{adjustbox}{max width=\textwidth, center}
-\begin{tabular}{c c c}
-\settowidth\mylen{$\frac{a+b+c+d}{2}$}
-$
-\begin{array}{C{\mylen}|C{\mylen}|C{\mylen}|}
- \multicolumn{1}{c}{}& \multicolumn{1}{c}{\phi_{2k}^{j}(x)} & \multicolumn{1}{c}{\phi_{2k+1}^{j}(x)} \\ \cline{2-3}
- \phi_{2l}^{j}(y) & a & b \\ \cline{2-3}
- \phi_{2l+1}^{j}(y) & c & d \\ \cline{2-3}
-\end{array}
-$
-&
-$
-\begin{array}{c}
+$(B_{i,d})_{i=1}^{n+d}$ ist eine Basis des Splineraums vom Grad $d$ zum Knotenvektor $\mathbf{t}=(t_0,...,t_n)$.
 \\
-\overset{\mbox{\footnotesize 1D}}{\longrightarrow} \\
-\overset{\mbox{\footnotesize Schritt}}{\longrightarrow}
-\end{array}
-$
+\end{frame}
+
+\begin{frame}{Grundlagen: B-Spline-Kurven}
+\begin{adjustbox}{max width=\textwidth, center}
+\begin{tabular}{c c}
+\begin{minipage}{0.45\textwidth}
+\textbf{Definition:} B-Spline-Kurve \\
+Für $(\mathbf{c}_i)_{i=1}^{n+d}$, $\mathbf{c}_i \in \R^m$ heißt
+\[
+\mathbf{f}(x):=\sum_{i=1}^{n+d}\mathbf{c_i}B_{i,d}(x)
+\]
+B-Spline-Kurve zu den \\ Kontrollpunkten $(\mathbf{c}_i)_{i=1}^{n+d}$.
+\end{minipage}
 &
-\settowidth\mylen{$\frac{a+b+c+d}{2}$}
-$
-\begin{array}{C{\mylen}|C{\mylen}|C{\mylen}|}
- \multicolumn{1}{c}{}& \multicolumn{1}{c}{\phi_{k}^{j-1}(x)} & \multicolumn{1}{c}{\psi_{k}^{j-1}(x)} \\ \cline{2-3}
- \phi_{2l}^{j}(y) & \frac{a+b}{\sqrt{2}} & \frac{a-b}{\sqrt{2}} \\ \cline{2-3}
- \phi_{2l+1}^{j}(y) & \frac{c+d}{\sqrt{2}} & \frac{c-d}{\sqrt{2}} \\ \cline{2-3}
-\end{array}
-$
-\\[1.2cm]
-&
-&
-\settowidth\mylen{$\frac{a+b+c+d}{2}$}
-$
-\begin{array}{C{\mylen} C{\mylen} C{\mylen}}
- & \big\downarrow \mbox{\footnotesize 1D} & \mbox{\footnotesize Schritt} \big\downarrow \\
-\end{array}
-$
-\\[0.45cm]
-&
-&
-\settowidth\mylen{$\frac{a+b+c+d}{2}$}
-$
-\begin{array}{C{\mylen}|C{\mylen}|C{\mylen}|}
- \multicolumn{1}{c}{}& \multicolumn{1}{c}{\phi_{k}^{j-1}(x)} & \multicolumn{1}{c}{\psi_{k}^{j-1}(x)} \\ \cline{2-3}
- \phi_{l}^{j-1}(y) & \frac{a+b+c+d}{2} & \frac{a-b+c-d}{2} \\ \cline{2-3}
- \psi_{l}^{j-1}(y) & \frac{a+b-c+d}{2} & \frac{a-b-c+d}{2} \\ \cline{2-3}
-\end{array}
-$
+\begin{minipage}{0.5\textwidth}
+\includegraphics[width=\textwidth]{b_spline_curve.pdf}
+\end{minipage}
+
 \end{tabular}
 \end{adjustbox}
 \end{frame}
 
-\begin{frame}{2D Nicht-Standard-Haar-Wavelet-Transformation III}
-\begin{adjustbox}{max totalheight=0.9\textheight ,center}
-\begin{tabular}{c}
-\settowidth\mylen{$\phi_{2k+1}^{j}(x)$}
-$
-\begin{array}{c|c c c|C{\mylen}|C{\mylen}|c}
- \multicolumn{1}{c}{}& \multicolumn{1}{c}{\phi_{0}^{j}(x)} & \multicolumn{1}{c}{\phi_{1}^{j}(x)} & \multicolumn{1}{c}{...} & \multicolumn{1}{c}{\phi_{2k}^{j}(x)} & \multicolumn{1}{c}{\phi_{2k+1}^{j}(x)} & ... \\ \cline{2-7}
- \phi_{0}^{j}(y) & & & & & & \\
- \phi_{1}^{j}(y) & & & & & & \\
- \vdots & & & & & & \\ \cline{2-7}
- \phi_{2l}^{j}(y) & & & & a & b & \\ \cline{2-7}
- \phi_{2l+1}^{j}(y) & & & & c & d & \\ \cline{2-7}
- \vdots & & & & & & \\
-\end{array}
-$
-\\[2.0cm]
-$\mbox{1D Zeilen} \quad \big\downarrow \quad \mbox{1D Spalten}$
-\\[0.25cm]
-\settowidth\mylen{$\phi_{2k+1}^{j}(x)$}
-$
-\begin{array}{c|c c|c|c c:c c|c|c}
- \multicolumn{1}{c}{}& \multicolumn{1}{c}{\phi_{0}^{j-1}(x)} & \multicolumn{1}{c}{...} & \multicolumn{1}{c}{\phi_{k}^{j-1}(x)} & \multicolumn{1}{c}{...} & \multicolumn{1}{c}{\phi_{\frac{n}{2}-1}^{j-1}(x)} & \multicolumn{1}{c}{\psi_{0}^{j-1}(x)} & \multicolumn{1}{c}{...} & \multicolumn{1}{c}{\psi_{k}^{j-1}(x)} & ... \\ \cline{2-10}
- \phi_{0}^{j-1}(y) & & & & & & & & & \\
- \vdots & & & & & & & & & \\ \cline{2-10}
- \phi_{l}^{j-1}(y) & & & \frac{a+b+c+d}{2} & & & & & \frac{a-b+c-d}{2} & \\ \cline{2-10}
- \vdots & & & & & & & & & \\ 
- \phi_{\frac{n}{2}-1}^{j-1}(y) & & & & & & & & & \\ \cdashline{2-10}
- \psi_{0}^{j-1}(y) & & & & & & & & & \\ 
- \vdots & & & & & & & & & \\ \cline{2-10}
- \psi_{l}^{j-1}(y) & & & \frac{a+b-c+d}{2} & & & & & \frac{a-b-c+d}{2} & \\ \cline{2-10}
- \vdots & & & & & & & & & \\
-\end{array}
-$
-\end{tabular}
-\end{adjustbox}
+\begin{frame}{Multiskalenanalyse von Splinekurven}
+Analyse von B-Spline-Kurven ergibt sich Komponentenweise.
+\\[1.0cm]
+Kochrezept:
+\begin{itemize}
+\item
+Geschachtelte Splineräume: \\
+Die Splineräume $V_d^k$ eines Grades $d$ zu den Knoten
+\[
+\mathbf{t}^k=(\frac{0}{2^k},\frac{1}{2^k},...,\frac{2^k-1}{2^k},\frac{2^k}{2^k})
+\]
+sind geschachtelt. Wähle als Skalierungsfunktionen die B-Splines zu
+\[
+\mathbf{\tau}^k=(\underbrace{0,...,0}_{d},\frac{0}{2^k},\frac{1}{2^k},...,\frac{2^k-1}{2^k},\frac{2^k}{2^k},\underbrace{1,...,1}_{d})
+.
+\]
+\end{itemize}
+\end{frame}
+
+
+% Splitte Folie vermutlich etwa hier...
+
+\begin{frame}{Multiskalenanalyse von Splinekurven}
+\begin{itemize}
+\item Standard-Skalarprodukt:
+\[
+\langle f,g\rangle =\int_0^1f(x)g(x)dx
+\]
+\item Wavelets:\\
+Wahl ist nicht eindeutig! Man verlangt zum Beispiel minimalen Träger, um die Wavelets festzulegen. Diese beschleunigt zudem die Berechnungen.
+\end{itemize}
 \end{frame}
 
 }
 
-\section{Anwendungen}
-	
-	{\setbeamertemplate{frame footer}{Quelle}
-	\begin{frame}{Titel}
-		\begin{columns}[T,onlytextwidth]
-			\column{0.75\textwidth}
-			Inhalt
-			\column{0.25\textwidth}
-			Inhalt 2
-		\end{columns}
-		Inhalt 3 \pause
-		\begin{columns}[c,onlytextwidth]
-			\column{0.38\textwidth}
-			\centering
-			Inhalt 4
-			
-			\column{0.61\textwidth}
-			\vspace{15pt}\ \\
-			\centering {\large$\Rightarrow$ Inhalt 5}
-		\end{columns}
-	\end{frame}}
+
+
+
+%\section{Anwendungen}
+%	
+%	{\setbeamertemplate{frame footer}{Quelle}
+%	\begin{frame}{Titel}
+%		\begin{columns}[T,onlytextwidth]
+%			\column{0.75\textwidth}
+%			Inhalt
+%			\column{0.25\textwidth}
+%			Inhalt 2
+%		\end{columns}
+%		Inhalt 3 \pause
+%		\begin{columns}[c,onlytextwidth]
+%			\column{0.38\textwidth}
+%			\centering
+%			Inhalt 4
+%			
+%			\column{0.61\textwidth}
+%			\vspace{15pt}\ \\
+%			\centering {\large$\Rightarrow$ Inhalt 5}
+%		\end{columns}
+%	\end{frame}}

@@ -1,8 +1,4 @@
-\section{Anwendungen}
-%
-\subsection{Bildkompression}
-%
-\subsubsection{Algorthimen für Haar-Analyse und Synthese}
+\section{Algorithmen}
 %
 \paragraph{1D Signale}~\\
 Nun geht es um die konkrete Realisierung einer Filterbank für Analyse und Synthese von Signalen. Da es sich bei der Haar-Basis um eine Orthonormalbasis handelt, läge es auf Anhieb nahe, die Koeffizienten einfach über ein Skalarprodukt mit der entsprechenden Basisfunktion zu berechnen. Da alle betracheten Funktionen stückweise konstant sind, wäre ein solches Vorgehen prinzipiell machbar, es stellt sich aber heraus, dass man auf diese Weise einige Zwischneergebnisse mehrfach berechnet, was eine relative hohe Laufzeit zur Folge hat. Einen effizienteren Algorithmus erhält man, indem man sich stärker an den konzeptionellen Ablauf der Filterbank hält und das Signal schrittweise analysiert.\\
@@ -144,7 +140,7 @@ def analysis(C):
     C' = copy(C)
     h = C.size
     while h > 1:
-        C' = analysisStep(C'[0:h])
+        C'[0:h] = analysisStep(C'[0:h])
         h = h // 2
     return C'
 \end{verbatim}
@@ -155,7 +151,7 @@ def synthesis(C'):
     h = 1
     while h < C'.size:
         h = 2*h
-        C = synthesisStep(C[0:h])
+        C[0:h] = synthesisStep(C[0:h])
     return C
 \end{verbatim}
 \\
@@ -573,7 +569,7 @@ Die Nicht-Standard-Transformation ist somit etwas schneller als die Standard-Tra
 % Wenn noch Zeit zu füllen ist, könnte es hier noch interessant sein zu zeigen, dass es auch 'Bilder'
 % gibt, die sich auf diese Weise bezüglich der Haar-Basis nur schlecht komprimieren lassen.
 % Eine solche Kompressionsstrategie kann immer nur für eine gewisse Klasse von Signalen funktionieren.
-\subsubsection{Kompression}~\\
+\section{Kompression}~\\
 Das Ziel von Kompression ist die möglicherweise verlustbehaftete Darstellung eines Signals mit Hilfe möglichst weniger Bits. Im Folgenden soll auf einen möglichen Ansatz zum Erreichen dieses Ziels eingegangen werden.
 Konkret werden hier Signale betrachtet, die sich als Elemente eines endlichdimensionalen Vektorraums mit einem Skalarprodukt, dessen induzierte Metrik ein passendes Maß für einen Approximationsfehler solcher Signale liefert, auffassen lassen. Wenn $m$ die Dimension dieses Vektorraumes ist, so werden im allgemeinen $m$ Koeffizienten bezüglich einer beliebigen Basis benötigt, um ein beliebiges Signal darzustellen. Ein einfacher Ansatz zur verlustbehafteten Kompression besteht darin, einige dieser Koeffizienten wegzulassen, d.h. auf Null zu setzen. Wie groß der hierdurch verursachte Approximationfehler ist, hängt im Allgemeinen nicht nur von der Größe der weggelassenen Koeffizienten, sondern auch von der gewählten Basis ab. Für Orthonoramalbasen ergibt sich ein besonders einfacher Zusammenhang: Sei $I=\{1,...,m\}$ die Indexmenge zum indizieren der Basis, $f=\sum_{i \in I} c_i \mathbf{b}_i$ ein Vektor representiert durch Koeffizienten $(c_i)$ bezüglich einer Orthonormalbasis $(\mathbf{b}_i)$ und $\tilde{f}=\sum_{i \in \tilde{I}} c_i \mathbf{b}_i$, wobei $\tilde{I} \subset I$, eine Approximation des Vektors. Der Approximationsfehler ergibt sich zu:
 %
@@ -591,7 +587,7 @@ Für natürliche Bilder stellt sich heraus, dass die Haar-Basis der Wavelet-Tran
 Der Konzeptionell einfachste Algorithmus hierzu besteht schlicht darin die Koeffizienten der Wavelet-Transformation absteigend zu sortieren. Ist eine gewisse Kompressionsrate gefordert, so lässt man einfach entsprechend viele Koeffizienten vom Ende der Liste weg. Ist ein gewisser Approximationsfehler einzuhalten, so lässt man gerade so viele Koeffizienten vom Ende der Liste weg, dass die Summe der Quadrate dieser noch unterhalb der quadrierten Fehlertolleranz liegt.
 %
 
-\subsection{Multiskalen-Representation von Splinekurven}
+\section{Splinekurven}
 %
 %\paragraph{}
 %Im Fall von eindimensionalen Signalen oder zweidimensionalen Bildern ist es relativ intuitiv das Signal auf verschiedene Größenskalen darzustellen, man würde vermutlich auch ohne den theoretischen Rahmen der Multiskalenanalyse auskommen. Für abstraktere Anwendungen ist das hergeleitete Design-Prinzip hingegen sehr hilfreich. Die Multiskalen-Representation von Spline-Kurven geht in diese Richtung.

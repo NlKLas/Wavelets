@@ -432,7 +432,7 @@ def updateCompleteDecomposition(deltaC_j, L, P, F):
 
 if __name__ == '__main__':
     np.set_printoptions(linewidth=200)#,precision=1)
-    
+    '''
     D = np.array([[0.0,0],[1,0],[1,1],[0,1],[0.5,0.5],[1,1]])
     C = upsample(D)
     print(D)
@@ -446,8 +446,9 @@ if __name__ == '__main__':
     #plt.scatter(A[:,0], A[:,1], color='green')
     #plt.plot(A[:,0], A[:,1], color='green', ls='--')
     plot_uniform_b_spline_curve(plt.gca(), A, degree=3, N=1000, color='green')
+    '''
     
-    ''''
+    '''
     n = A.shape[0]-3
     k = np.around(np.log2(n)).astype(int)
     
@@ -461,6 +462,7 @@ if __name__ == '__main__':
     plot_uniform_b_spline_curve(plt.gca(), B_C, degree=3, N=1000, color='red')
     '''
     
+    '''
     L = completeDecomposition(A)
     
     for G in L:
@@ -469,7 +471,7 @@ if __name__ == '__main__':
         plot_uniform_b_spline_curve(plt.gca(), G, degree=3, N=1000)
     
     plt.show()
-    
+    '''
     
     '''
     print((projectionPQcubic(4).toarray()!=0)*1)
@@ -534,9 +536,11 @@ if __name__ == '__main__':
 
     #plt.plot(x,deBoor(x,t,c[0,:],p))
 
-    plt.grid()
+    #plt.grid()
+    plt.savefig('b_spline_curve.pdf')
     plt.show()
     '''
+    
 
 
 
