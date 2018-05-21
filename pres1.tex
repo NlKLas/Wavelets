@@ -1,4 +1,9 @@
 % !TeX spellcheck = de_DE
+\begin{frame}{Gliederung}
+\setbeamertemplate{section in toc}[sections numbered]
+\tableofcontents[hideallsubsections]
+\end{frame}
+
 {\setbeamertemplate{frame footer}{\textit{Bildquelle:} NASA}
 \begin{frame}{Motivation}
 	\begin{columns}[c,onlytextwidth]
@@ -23,11 +28,6 @@
 		\hspace{-20.2mm}$\Rightarrow$\hspace{1.1mm} beste Auflösung bei gegebenem Speicherplatz
 	\end{description}
 \end{frame}}
-
-\begin{frame}{Gliederung}
-	\setbeamertemplate{section in toc}[sections numbered]
-	\tableofcontents[hideallsubsections]
-\end{frame}
 
 \section[Multiskalenanalyse \hspace{42mm}\small am Beispiel der eindimensionalen Haar-Wavelets]{Multiskalenanalyse}
 	
@@ -93,14 +93,15 @@
 			$V^i_{2D}:= V^i_{1D}\times V^i_{1D}\subset\left[ \mathcal{L}^2([0,1])\right]^2$\vspace{3mm}\\
 			$\left\langle f, g\right\rangle _{2D}:=\int_{0}^{1}\int_{0}^{1}f(x,y)g(x,y)\mathsf{d}x\mathsf{d}y$\vspace{3mm}\\
 			$\Phi^i_{2D}(x, y):=\{\phi^i_k(x)\phi^i_l(y)\mid \phi^i_k, \phi^i_l\in\Phi^i_{1D} \}$
-		\end{columns}\vspace{4mm}\pause
+		\end{columns}\vspace{3mm}\pause
 		\begin{center}
-				\bf Wavelets\vspace{-4mm}
+				\bf Wavelets\vspace{-5mm}
 		\end{center}
 		\alert{Standard-Konstruktion}\vspace{1mm}\\
-		\hspace{12mm}$\Psi^i_{2D}(x, y):=\{\psi^i_k(x)\psi^i_l(y)\mid \psi^i_k,\psi^i_l\in\Phi_{1D}^0\cup\Psi_{1D}^0\cup...\cup\Psi_{1D}^{i} \}$\vspace{3mm}\\ \pause
+		\hspace{6mm}$\Psi^i_{2D}(x, y):=\{\psi^i_k(x)\lambda^i_l(y)\mid \psi^i_k\in\Psi_{1D}^{i};\lambda^i_l\in\Phi_{1D}^0\cup\Psi_{1D}^0\cup...\cup\Psi_{1D}^{i} \}$\\
+		\hspace{23mm}$\cup\ \{\lambda^i_k(x)\psi^i_l(y)\mid \psi^i_l\in\Psi_{1D}^{i};\lambda^i_k\in\Phi_{1D}^0\cup\Psi_{1D}^0\cup...\cup\Psi_{1D}^{i} \}$\vspace{3mm}\\ \pause
 		\alert{Nicht-Standard-Konstruktion}\vspace{1mm}\\
-		\hspace{12mm}$\tilde\Psi^i_{2D}(x, y):=\{2^i\psi^0(2^ix-k, 2^iy-l)\mid \psi^0 \in \Psi^0_{2D}\}$
+		\hspace{6mm}$\tilde\Psi^i_{2D}(x, y):=\{2^i\psi^0(2^ix-k, 2^iy-l)\mid \psi^0 \in \Psi^0_{2D}\}$
 	\end{frame}
 
 	{\setbeamertemplate{frame footer}{\textit{Bildquelle:} Wavelets for Computer Graphics: A Primer}
@@ -112,9 +113,9 @@
 			\includegraphics[trim=79 545 325 100, clip, width=\textwidth]{2d_wavelets.pdf}
 			\column{0.46\textwidth}
 			\centering
-			\pause
+			\pause[4]
 			\alert{Nicht-Standard-Wavelets}\vspace{4mm}\\
-			\includegraphics[trim=325 545 79 100, clip, width=\textwidth]{2d_wavelets.pdf}
+			\includegraphics<4-7>[trim=325 545 79 100, clip, width=\textwidth]{2d_wavelets.pdf}
 		\end{columns}
 	\end{frame}}
 

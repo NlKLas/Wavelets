@@ -84,9 +84,10 @@ Die geschachtelten Vektorräume sowie Skalenfunktionen werden als kartesisches P
 \end{align*}
 Für die Konstruktion der Wavelets gibt es zwei gängige Varianten:
 \paragraph{Standard-Konstruktion}~\\
-Hierbei wird die 1D Wavelet-Basis $\Phi_{1D}^0\cup\Psi_{1D}^0\cup...\cup\Psi_{1D}^{i}$ für x- und y-Achse separat angewandt:\begin{equation*}
-	\Psi^i_{2D}(x, y):=\{\psi^i_k(x)\psi^i_l(y)\mid \psi^i_k,\psi^i_l\in\Phi_{1D}^0\cup\Psi_{1D}^0\cup...\cup\Psi_{1D}^{i} \}
-\end{equation*}Bildlich gesprochen wird die 1D Wavelet-Transformation zuerst auf die Zeilen angewendet, um dann die erhaltenen transformierten Koeffizienten spaltenweise einer zweiten 1D Wavelet-Transformation zu unterziehen.
+Hierbei wird die 1D Wavelet-Basis $\Phi_{1D}^0\cup\Psi_{1D}^0\cup...\cup\Psi_{1D}^{i}$ für x- und y-Achse separat angewandt:\begin{align*}
+	\Psi^i_{2D}(x, y)&:=\{\psi^i_k(x)\lambda^i_l(y)\mid \psi^i_k\in\Psi_{1D}^{i};\lambda^i_l\in\Phi_{1D}^0\cup\Psi_{1D}^0\cup...\cup\Psi_{1D}^{i} \}\\
+	&\cup\ \{\lambda^i_k(x)\psi^i_l(y)\mid \psi^i_l\in\Psi_{1D}^{i};\lambda^i_k\in\Phi_{1D}^0\cup\Psi_{1D}^0\cup...\cup\Psi_{1D}^{i} \}
+\end{align*}Bildlich gesprochen wird die 1D Wavelet-Transformation zuerst auf die Zeilen angewendet, um dann die erhaltenen transformierten Koeffizienten spaltenweise einer zweiten 1D Wavelet-Transformation zu unterziehen.
 \paragraph{Nicht-Standard-Konstruktion}~\\
 Bei der Nicht-Standard-Konstruktion werden als Ausgangspunkt die Wavelets $\Psi^0_{2D}$ der Standard-Konstruktion verwendet und in x- und y-Richtung gleichzeitig skaliert:\begin{equation*}
 	\tilde\Psi^i_{2D}(x, y):=\{2^i\psi^0(2^ix-k, 2^iy-l)\mid \psi^0 \in \Psi^0_{2D}\}
