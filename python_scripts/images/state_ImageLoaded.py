@@ -83,7 +83,7 @@ class ImageLoadedState:
         
         self.plot_ax.plot(self.curve_approx[:,0], self.curve_approx[:,1], color='blue')
         
-        self.plot_ax.plot(self.x_worst_case, self.y_worst_case, color='black', ls='--')
+        #self.plot_ax.plot(self.x_worst_case, self.y_worst_case, color='black', ls='--')
         self.plot_ax.set_xlabel('Fraction of Coefficients Used')
         self.plot_ax.set_ylabel('Relative $L^2$-Error')
         self.plot_ax.grid()
