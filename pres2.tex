@@ -51,7 +51,7 @@ Einzelschritt im Speicher:
 \begin{tabular}{c}
 \settowidth\mylen{$\phi_{2i+1}^{j}$}
 $
-\begin{array}{c C{\mylen} C{\mylen} C{1.4\mylen} C{\mylen} C{\mylen} C{1.4\mylen} C{\mylen} C{\mylen}}
+\begin{array}{c C{\mylen} C{\mylen} C{1.5\mylen} C{\mylen} C{\mylen} C{1.5\mylen} C{\mylen} C{\mylen}}
 &
 \phi_{0}^{j} & \phi_{1}^{j} & ... & \phi_{2i}^{j} & \phi_{2i+1}^{j} & ... & \phi_{n-2}^{j} & \phi_{n-1}^{j} \\ \cline{2-9}
 C \hphantom{'}:
@@ -78,7 +78,7 @@ $
 $
 \\[0.5cm]
 
-\settowidth\mylen{$\phi_{\frac{n}{2}-1}^{j-1}$}
+\settowidth\mylen{$\psi_{\frac{n}{2}-1}^{j-1}$}
 $
 \begin{array}{c C{\mylen} C{0.5\mylen} C{\mylen} C{0.5\mylen} C{\mylen} C{\mylen} C{0.5\mylen} C{\mylen} C{0.5\mylen} C{\mylen}}
 &
@@ -540,6 +540,7 @@ $\frac{8}{3}(n^2-1)$
 Sei $\mathbf{t}=(t_0,...,t_n)$ eine monoton steigende Sequenz reeller Zahlen und $d \in \N_0$. Eine Funktion $S:[t_0,t_n] \rightarrow \R$ in $C^{d-1}(\R)$ heißt Splinefunktion vom Grad $d$ zum Knotenvektor $\mathbf{t}$, wenn $S|_{[t_{k},t_{k+1}]}$, $k=0,...,n-1$, ein Polynom vom Maximalgrad $d$ ist. 
 \\[1.0cm]
 
+\pause
 Die Menge aller Splinefunktionen selben Grades $d$ und zum selben Knotenvektor $\mathbf{t}$ bilden einen reellen Vektorraum mit $n+d$ Dimensionen. 
 \\
 \end{frame}
@@ -591,7 +592,7 @@ Die Splineräume $V_d^k$ eines Grades $d$ zu den Knoten
 \[
 \mathbf{t}^k=(\frac{0}{2^k},\frac{1}{2^k},...,\frac{2^k-1}{2^k},\frac{2^k}{2^k})
 \]
-sind geschachtelt. Wähle als Skalierungsfunktionen die B-Splines zu
+sind geschachtelt. Wähle als Skalenfunktionen die B-Splines zu
 \[
 \mathbf{\tau}^k=(\underbrace{0,...,0}_{d},\frac{0}{2^k},\frac{1}{2^k},...,\frac{2^k-1}{2^k},\frac{2^k}{2^k},\underbrace{1,...,1}_{d})
 .
