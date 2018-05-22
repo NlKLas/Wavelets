@@ -91,7 +91,7 @@ $
 ... &
 \psi_{i}^{j-1} &
 ... &
-\phi_{\frac{n}{2}-1}^{j} \\ \cline{2-11}
+\psi_{\frac{n}{2}-1}^{j} \\ \cline{2-11}
 C':
 &
 \multicolumn{1}{|c}{} & 
@@ -157,7 +157,7 @@ $
 \begin{adjustbox}{minipage=0.95\linewidth, fbox}
 \begin{verbatim}
 def analysis(C):
-    C' = copy(C)
+    C' = copy(C)    # <-- optional
     h = C.size
     while h > 1:
         C'[0:h] = analysisStep(C'[0:h])
