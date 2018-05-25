@@ -17,3 +17,5 @@ pres.pdf
 pres.pdf
 4_wavelet_final[14255].pdf
 *.vrb
+python_scripts/images/__pycache__/
+python_scripts/b_splines/__pycache__/
