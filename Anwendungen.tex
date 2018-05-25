@@ -1,7 +1,7 @@
 \section{Algorithmen}
 %
 \paragraph{1D Signale}~\\
-Nun geht es um die konkrete Realisierung einer Filterbank für Analyse und Synthese von Signalen. Da es sich bei der Haar-Basis um eine Orthonormalbasis handelt, läge es auf Anhieb nahe, die Koeffizienten einfach über ein Skalarprodukt mit der entsprechenden Basisfunktion zu berechnen. Da alle betracheten Funktionen stückweise konstant sind, wäre ein solches Vorgehen prinzipiell machbar, es stellt sich aber heraus, dass man auf diese Weise einige Zwischneergebnisse mehrfach berechnet, was eine relative hohe Laufzeit zur Folge hat. Einen effizienteren Algorithmus erhält man, indem man sich stärker an den konzeptionellen Ablauf der Filterbank hält und das Signal schrittweise analysiert.\\
+Nun geht es um die konkrete Realisierung einer Filterbank für Analyse und Synthese von Signalen. Da es sich bei der Haar-Basis um eine Orthonormalbasis handelt, läge es auf Anhieb nahe, die Koeffizienten einfach über ein Skalarprodukt mit der entsprechenden Basisfunktion zu berechnen. Da alle betracheten Funktionen stückweise konstant sind, wäre ein solches Vorgehen prinzipiell machbar, es stellt sich aber heraus, dass man auf diese Weise einige Zwischenergebnisse mehrfach berechnet, was eine relative hohe Laufzeit zur Folge hat. Einen effizienteren Algorithmus erhält man, indem man sich stärker an den konzeptionellen Ablauf der Filterbank hält und das Signal schrittweise analysiert.\\
 %
 Die Approximation eines Signales liege in Form einer Liste $C$ von $2^j$ Koeffizienten bezüglich der Skalierungsfunktionenbasis des Raumes $V^j = V^{j-1} \oplus W^{j-1}$ vor. Ein Schritt des zu implementierenden Filterbank-Algorithmus erhälte nun eine solche Liste $C$ und führte eine Basistransformation durch, sodass eine Liste $C'$ gleicher Länge entsteht, deren erste $2^{j-1}$ Einträge die Koeffizienten bezüglich der Skalierungsfunktionenbasis von $V^{j-1}$ darstellen, während die übrigen $2^{j-1}$ Einträge die Koeffizienten bezüglich der zugehörigen Waveletbasis von $W^{j-1}$ sind.\\
 Die genaue Berechnungsvorschrift hierfür erhält man aus den Beziehungen der Skalierungsfunktionen $(\phi_{i}^{j-1})_{i=0}^{2^{j-1}-1}$ und Waveletfunktionen $(\psi_{i}^{j-1})_{i=0}^{2^{j-1}-1}$ auf Level $(j-1)$ und den Skalierungsfunktionen $(\phi_{i}^{j})_{i=0}^{2^{j}-1}$ auf Level $j$. Für $i = 0, 1, ..., 2^{j-1}-1$ gilt:
@@ -42,7 +42,7 @@ oder in Matrixschreibweise:
 .
 \]
 %
-(\textbf{BILD!!!}) Diese Beziehungen leifern eine vollständige Charakterisierung des Basiswechsels, aus ihnen ließen sich zum Beispiel auch die Synthesematrizen $\mathbf{P}^j$ und $\mathbf{Q}^j$ aus der theoretischen Behandlung ableiten.\\
+Diese Beziehungen leifern eine vollständige Charakterisierung des Basiswechsels, aus ihnen ließen sich zum Beispiel auch die Synthesematrizen $\mathbf{P}^j$ und $\mathbf{Q}^j$ aus der theoretischen Behandlung ableiten.\\
 Wie man leicht sieht, ist die Matrix $\mathbf{M}$ selbstinvers. Für die umgekehrte Beziehung erhält man folglich für $i = 0, 1, ..., 2^{j-1}-1$ ebenfalls:
 %
 \[
@@ -227,7 +227,7 @@ def standardSynthesis(C'):
 \end{tabular}
 \end{adjustbox}
 
-\noindent Für ein Bild mit $n \times n$ Pixeln werden in Analyse und Synthese zweimal je $n-$mal die eindimensionnale Analyse und Synthese aufgerufen. Die Komplexität der Operationen liegt daher je bei $n(2n-2) + n(2n-2) = 4n^2-4n$.
+\noindent \textbf{Zur Laufzeit:} Für ein Bild mit $n \times n$ Pixeln werden in Analyse und Synthese zweimal je $n-$mal die eindimensionnale Analyse und Synthese aufgerufen. Die Komplexität der Operationen liegt daher je bei $n(2n-2) + n(2n-2) = 4n^2-4n$.
 
 % Ich bin mit dieser Abhandlung noch nicht wirklich zufrieden.... aber es sollte wohl reichen.....
 % Was irgendwie noch fehlt ist eine Behandlung der eigendlichen n x n Koeffizientenlisten, welche
@@ -235,7 +235,7 @@ def standardSynthesis(C'):
 % werden. Wenn ich mir diesbezüglich etwas Schönes ausgedacht haben, kann ich es hier vielleicht noch
 % einbringen...
 \subparagraph{Nicht-Standard-Basis} Für die Nicht-Standard-Basis ist die Situation ein wenig komplizierter. Es stellt sich aber heraus, dass auch hier ein Teil der Routinen aus dem eindimensionalen Fall wiederverwendet werden können. Ausgangspunkt ist in diese Fall eine zweidimensionale $n \times n$ Liste $C$ von Koeffizienten bezüglich der $n^2$ Basisfunktionen, Ziel ist ein Basiswechsel in die Nicht-Standard-Haar-Wavelet-Basis.\\
-Wie im eindimensionalen Fall steht zu Beginn die Beziehung zwischen den Skalierungsfunktionen auf Level $j$ und den Skalierungsfunktionen und Wavelets auf Level $(j-1)$. Hier gilt für $k, l = 0, 1, ..., 2^{j-1}-1$:
+Wie im eindimensionalen Fall steht zu Beginn die Beziehung zwischen den Skalenfunktionen auf Level $j$ und den Skalenfunktionen und Wavelets auf Level $(j-1)$. Hier gilt für $k, l = 0, 1, ..., 2^{j-1}-1$:
 %
 \[
 \left[ \phi\psi \right]_{k,l}^{j-1}
@@ -299,7 +299,7 @@ c & d
 .
 \]
 %
-Drückt man die obige Beziehung auf diese Weise aus, so erhält man: \textbf{(Stelle sicher, dass die Darstellung konsistent ist!!!)}
+Drückt man die obige Beziehung auf diese Weise aus, so erhält man:
 %
 \begin{align*}
 \phi\phi_{k,l}^{j-1} &=
@@ -518,7 +518,7 @@ t\boldsymbol{-}v & u\boldsymbol{-}w
 \end{array}
 \]
 %
-Das Resultat ist, dass ein Analyse-Schritt bezüglich der Nicht-Standard-Basis gerade ein Analyse-Schritt entlang einer Achse gefolgt von einem Analyse-Schritt entlang der anderen Achse ist. Selbiges gilt für die Synthese. Analog zum eindimensionalen Fall ergibt sich die Gesamtoperation für Analyse bzw. Synthese aus wiederholtem anwenden der Einzelschritte auf die Skalierungsfunktionskoeffizienten. Man erhält:
+Das Resultat ist, dass ein Analyse-Schritt bezüglich der Nicht-Standard-Basis gerade ein Analyse-Schritt entlang einer Achse gefolgt von einem Analyse-Schritt entlang der anderen Achse ist. Selbiges gilt für die Synthese. Analog zum eindimensionalen Fall ergibt sich die Gesamtoperation für Analyse bzw. Synthese aus wiederholtem anwenden der Einzelschritte auf die Skalenfunktionskoeffizienten. Man erhält:
 
 \begin{adjustbox}{max width=\textwidth ,center}
 \begin{tabular}{p{.575\textwidth}|p{.575\textwidth}}
@@ -551,7 +551,7 @@ def nonstandardSynthesis(C'):
 \end{tabular}
 \end{adjustbox}
 
-\noindent Die Laufzeitkomplexität der Routinen für $n \times n$ Listen mit $n=2^k$ ergibt damit sich zu 
+\noindent \textbf{Zur Laufzeit:} Die Laufzeitkomplexität der Routinen für $n \times n$ Listen mit $n=2^k$ ergibt damit sich zu 
 %
 \[
 \sum_{i=1}^k 2^i 2^i + 2^i 2^i
@@ -565,6 +565,9 @@ def nonstandardSynthesis(C'):
 \]
 %
 Die Nicht-Standard-Transformation ist somit etwas schneller als die Standard-Transformation.
+%
+\paragraph{Bemerkung}~\\
+In allen drei bisher betrachteten Fällen ließ sich die vollständige Transformation bzw. Synthese größenordnungsmäßig in linearer Zeit bezüglich der Anzahl der übergebenen Koeffizienten nach dem Ansatz der Filterbank implementieren. Dies ist tatsächlich kein Zufall. Es stellt sich heraus, dass bei geeigneter Konstruktion einer Multiskalenanalyse der Filterbank-Algorithmus immer in etwa linearer Laufzeit implementierbar ist. Genauer muss es dafür möglich sein die Skalenfunktionen und Wavelets einer Detailstufe $j-1$ jeweils als Linearkombination einer fixen Maximalzahl von Skalenfunktionen auf Detailstufe $j$ darzustellen. Dies lässt sich zum Beispiel durch Wahl von Skalenfunktionen und Wavelets mit minimalem oder zumindest möglichst kleinem Träger erreichen.
 %
 % Wenn noch Zeit zu füllen ist, könnte es hier noch interessant sein zu zeigen, dass es auch 'Bilder'
 % gibt, die sich auf diese Weise bezüglich der Haar-Basis nur schlecht komprimieren lassen.
@@ -612,7 +615,7 @@ Die Menge aller Splinefunktionen zum Knotenvektor $\mathbf{t}$ vom Grad $d$
 bildet, wie man sich leicht überzeugen kann, zusammen mit der punktweisen Addition und der skalaren Multiplikation mit einer reellen Zahl einen reellen Vektorraum. Bei einem Knotenvektor mit $(n+1)$ Elementen hat der Vektorraum der Splinefunktionen vom Grad $d$ gerade $(n+d)$ Dimensionen.\\
 \\
 Zur Definition von B-Spline-Kurven brauchen wir zunächst die so genannten B-Splines (auch Basis-Splines). Diese bilden, wie der Name es andeutet, eine Basis des Splineraumes eines jeweiligen Grades.\\
-Für die Konstruktion der B-Spline-Basis vom Grad $d$ bezüglich des Knotenvektors $\mathbf{t}=(t_0,t_1,...,t_n)$ wird der Knotenvektor noch um jeweils $d$ Werte am Anfang und am Ende ergänzt. Auf diese Weise erhält man den modifizierten Vektor $\mathbf{\tilde{t}}=(t_{-d},...,t_{-1},t_0,t_1,...,t_n,t_{n+1},...,t_{n+d})$. Die einzige Bedingung an die neuen Knoten ist, dass $\mathbf{\tilde{t}}$ wiederum nicht absteigend ist. Die genaue Wahl der $t_{-d},...,t_{-1},t_{n+1},...,t_{n+d}\in\R$ hat einen Einfluss auf die Form der B-Spline-Basisfunktionenen.\\
+Für die Konstruktion der B-Spline-Basis vom Grad $d$ bezüglich des Knotenvektors $\mathbf{t}=(t_0,t_1,...,t_n)$ wird der Knotenvektor noch um jeweils $d$ Werte am Anfang und am Ende ergänzt. Auf diese Weise erhält man den modifizierten Vektor $\mathbf{\tilde{t}}=(t_{-d},...,t_{-1},t_0,t_1,...,t_n,t_{n+1},...,t_{n+d})$. Die einzige Bedingung an die neuen Knoten ist, dass $\mathbf{\tilde{t}}$ wiederum nicht absteigend ist. Die genaue Wahl der $t_{-d},...,t_{-1},t_{n+1},...,t_{n+d}\in\R$ hat einen Einfluss auf die Form der B-Spline-Basisfunktionen.\\
 Mit Hilfe des modifizierten Knotenvektors $\mathbf{\tilde{t}}$ sind die $(n+d)$ B-Spline-Basisfunktionen $(B_{i,d})_{i=1}^{n+d}$ vom Grad $d$ nun durch folgende Rekursion definiert:
 \[
 B_{i,0}(x) := \begin{cases} 1& \tilde{t}_i<x<\tilde{t}_{i+1} \\ 0& \text{sonst} \end{cases}
@@ -639,7 +642,7 @@ Im weiteren betrachten wir hier eine spezielle Klasse von B-Spline-Kurven, so ge
 Aus der folgenden Konstruktion einer Multiskalenanalyse für Splinefunktionen ergibt sich intuitiv eine Multiskalenanalyse für B-Spline-Kurven in Räumen beliebiger Dimension. Die skalaren Koeffizienten vor den  Basisfunktionen werden einfach durch entsprechende Vektoren ersetzt. \\
 Die Konstruktion für Spline-Funktionen verläuft in den drei bekannten Schritten: 
 \begin{enumerate}
-\item Wahl von Skalierungsfuntionen, die eine Folge geschachtelter Splineräume aufspannen. Dies legt die Synthese-Matrizen $\mathbf{P}^j$ fest. 
+\item Wahl von Skalenfuntionen, die eine Folge geschachtelter Splineräume aufspannen. Dies legt die Synthese-Matrizen $\mathbf{P}^j$ fest. 
 \item Wahl eines Skalarprodukts. 
 \item Wahl von Waveletfunktionen, die die jeweiligen orthogonalen Komplemente aufspannen. Dies legt die Synthese-Matrizen $\mathbf{Q}^j$ fest.
 \end{enumerate}
@@ -648,7 +651,7 @@ Die Splineräume vom Grad $d$ zu den Knotenvektoren
 \[
 \mathbf{t}_k=(\frac{0}{2^k},\frac{1}{2^k},...,\frac{2^k-1}{2^k},\frac{2^k}{2^k})
 \]
-für $k\in\N_0$ sind also geschachtelt und beiten sich als Kandidaten an. Als Basis und somit als Skalierungsfunktionen werden die B-Spline-Basisfunktionen zu den modifizierten Knotenvektoren
+für $k\in\N_0$ sind also geschachtelt und beiten sich als Kandidaten an. Als Basis und somit als Skalenfunktionen werden die B-Spline-Basisfunktionen zu den modifizierten Knotenvektoren
 \[
 \mathbf{\tilde{t}}_k=(\underbrace{0,...,0}_{d},\frac{0}{2^k},\frac{1}{2^k},...,\frac{2^k-1}{2^k},\frac{2^k}{2^k},\underbrace{1,...,1}_{d})
 \]
